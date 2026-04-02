@@ -80,32 +80,32 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROF-01 | Pending | Pending |
-| PROF-02 | Pending | Pending |
-| PROF-03 | Pending | Pending |
-| PROF-04 | Pending | Pending |
-| PROF-05 | Pending | Pending |
-| PROF-06 | Pending | Pending |
-| LNCH-01 | Pending | Pending |
-| LNCH-02 | Pending | Pending |
-| LNCH-03 | Pending | Pending |
-| LNCH-04 | Pending | Pending |
-| LNCH-05 | Pending | Pending |
-| LNCH-06 | Pending | Pending |
-| DATA-01 | Pending | Pending |
-| DATA-02 | Pending | Pending |
-| DATA-03 | Pending | Pending |
-| DATA-04 | Pending | Pending |
-| DEVX-01 | Pending | Pending |
-| DEVX-02 | Pending | Pending |
-| DEVX-03 | Pending | Pending |
-| DEVX-04 | Pending | Pending |
+| PROF-01 | Phase 1 | Pending |
+| PROF-02 | Phase 1 | Pending |
+| PROF-03 | Phase 1 | Pending |
+| PROF-04 | Phase 1 | Pending |
+| PROF-05 | Phase 1 | Pending |
+| PROF-06 | Phase 1 | Pending |
+| LNCH-01 | Phase 2 | Pending |
+| LNCH-02 | Phase 2 | Pending |
+| LNCH-03 | Phase 2 | Pending |
+| LNCH-04 | Phase 2 | Pending |
+| LNCH-05 | Phase 2 | Pending |
+| LNCH-06 | Phase 2 | Pending |
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 1 | Pending |
+| DATA-03 | Phase 1 | Pending |
+| DATA-04 | Phase 1 | Pending |
+| DEVX-01 | Phase 3 | Pending |
+| DEVX-02 | Phase 3 | Pending |
+| DEVX-03 | Phase 1 | Pending |
+| DEVX-04 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 20 total
-- Mapped to phases: 0
-- Unmapped: 20
+- Mapped to phases: 20
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-02*
-*Last updated: 2026-04-02 after initial definition*
+*Last updated: 2026-04-02 after roadmap creation*
