@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 3 context gathered
-last_updated: "2026-04-03T19:38:23.823Z"
+status: Milestone complete
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-04-03T19:55:08.587Z"
 progress:
   total_phases: 3
-  completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  completed_phases: 3
+  total_plans: 9
+  completed_plans: 9
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-02)
 
 **Core value:** Profile isolation -- each Claude Code account's local state lives in its own directory, switching is explicit and safe.
-**Current focus:** Phase 02 — launch-and-shell-integration
+**Current focus:** Phase 03 — developer-experience-polish
 
 ## Current Position
 
-Phase: 3
+Phase: 03
 Plan: Not started
 
 ## Performance Metrics
@@ -53,6 +53,8 @@ Plan: Not started
 | Phase 01 P04 | 3min | 2 tasks | 1 files |
 | Phase 02 P01 | 2min | 2 tasks | 5 files |
 | Phase 02 P02 | 2 | 2 tasks | 3 files |
+| Phase 03 P01 | 2 | 2 tasks | 8 files |
+| Phase 03 P02 | 1min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -72,6 +74,8 @@ Recent decisions affecting current work:
 - [Phase 02]: Strip CLAUDE_*/ANTHROPIC_* but preserve CLMUX_* env vars for tooling
 - [Phase 02]: env command uses resolve_profile(None) for active profile only (D-08)
 - [Phase 02]: Status item count via read_dir().count() respects DATA-04 opaque directories
+- [Phase 03]: Combined Task 1 and Task 2 into single pass for shell completions + --json flags
+- [Phase 03]: JSON output uses serde_json::to_string_pretty for human-readable formatted output
 
 ### Pending Todos
 
@@ -84,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-03T19:38:23.819Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-developer-experience-polish/03-CONTEXT.md
+Last session: 2026-04-03T19:51:51.819Z
+Stopped at: Completed 03-02-PLAN.md
+Resume file: None

@@ -62,7 +62,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Shell completions command and CLI extensions for --json flags
+- [x] 03-01-PLAN.md -- Shell completions command and CLI extensions for --json flags
 - [ ] 03-02-PLAN.md -- JSON output implementation for list, status, and env commands
 
 ## Progress

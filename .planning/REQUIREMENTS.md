@@ -34,8 +34,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Developer Experience
 
-- [ ] **DEVX-01**: User can generate shell completions for bash, zsh, and fish via `clmux completions <shell>`
-- [ ] **DEVX-02**: User can get machine-parseable JSON output via `--json` flag on `list`, `status`, and `show`
+- [x] **DEVX-01**: User can generate shell completions for bash, zsh, and fish via `clmux completions <shell>`
+- [x] **DEVX-02**: User can get machine-parseable JSON output via `--json` flag on `list`, `status`, and `show`
 - [x] **DEVX-03**: Colored output to TTY, plain output when piped (respects `NO_COLOR`)
 - [x] **DEVX-04**: Clear error messages with actionable suggestions (e.g., "Profile 'foo' not found. Run `clmux list` to see available profiles.")
 
@@ -96,8 +96,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-02 | Phase 1 | Complete |
 | DATA-03 | Phase 1 | Complete |
 | DATA-04 | Phase 1 | Complete |
-| DEVX-01 | Phase 3 | Pending |
-| DEVX-02 | Phase 3 | Pending |
+| DEVX-01 | Phase 3 | Complete |
+| DEVX-02 | Phase 3 | Complete |
 | DEVX-03 | Phase 1 | Complete |
 | DEVX-04 | Phase 1 | Complete |
 
