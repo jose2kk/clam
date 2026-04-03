@@ -9,12 +9,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Profile Management
 
-- [ ] **PROF-01**: User can create a named profile that provisions an isolated directory at `~/.clmux/profiles/<name>/`
-- [ ] **PROF-02**: User can list all configured profiles with the active profile visually marked
-- [ ] **PROF-03**: User can switch the active profile by name, updating `~/.clmux/state.toml`
-- [ ] **PROF-04**: User can print the active profile name to stdout for scripting (`clmux current`)
-- [ ] **PROF-05**: User can remove a profile by name with confirmation prompt (refuses to remove active profile)
-- [ ] **PROF-06**: Profile names are validated (alphanumeric, hyphens, underscores only) to prevent path traversal
+- [x] **PROF-01**: User can create a named profile that provisions an isolated directory at `~/.clmux/profiles/<name>/`
+- [x] **PROF-02**: User can list all configured profiles with the active profile visually marked
+- [x] **PROF-03**: User can switch the active profile by name, updating `~/.clmux/state.toml`
+- [x] **PROF-04**: User can print the active profile name to stdout for scripting (`clmux current`)
+- [x] **PROF-05**: User can remove a profile by name with confirmation prompt (refuses to remove active profile)
+- [x] **PROF-06**: Profile names are validated (alphanumeric, hyphens, underscores only) to prevent path traversal
 
 ### Launch & Integration
 
@@ -27,17 +27,17 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Data Integrity
 
-- [ ] **DATA-01**: State file (`~/.clmux/state.toml`) is written atomically using tempfile + rename to prevent corruption
-- [ ] **DATA-02**: Config file (`~/.clmux/config.toml`) is written atomically
-- [ ] **DATA-03**: Profile directories are created with `0700` permissions (user-only access)
-- [ ] **DATA-04**: Profile directories are treated as opaque — clmux never parses Claude Code's internal files
+- [x] **DATA-01**: State file (`~/.clmux/state.toml`) is written atomically using tempfile + rename to prevent corruption
+- [x] **DATA-02**: Config file (`~/.clmux/config.toml`) is written atomically
+- [x] **DATA-03**: Profile directories are created with `0700` permissions (user-only access)
+- [x] **DATA-04**: Profile directories are treated as opaque — clmux never parses Claude Code's internal files
 
 ### Developer Experience
 
 - [ ] **DEVX-01**: User can generate shell completions for bash, zsh, and fish via `clmux completions <shell>`
 - [ ] **DEVX-02**: User can get machine-parseable JSON output via `--json` flag on `list`, `status`, and `show`
-- [ ] **DEVX-03**: Colored output to TTY, plain output when piped (respects `NO_COLOR`)
-- [ ] **DEVX-04**: Clear error messages with actionable suggestions (e.g., "Profile 'foo' not found. Run `clmux list` to see available profiles.")
+- [x] **DEVX-03**: Colored output to TTY, plain output when piped (respects `NO_COLOR`)
+- [x] **DEVX-04**: Clear error messages with actionable suggestions (e.g., "Profile 'foo' not found. Run `clmux list` to see available profiles.")
 
 ## v2 Requirements
 
@@ -80,26 +80,26 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROF-01 | Phase 1 | Pending |
-| PROF-02 | Phase 1 | Pending |
-| PROF-03 | Phase 1 | Pending |
-| PROF-04 | Phase 1 | Pending |
-| PROF-05 | Phase 1 | Pending |
-| PROF-06 | Phase 1 | Pending |
+| PROF-01 | Phase 1 | Complete |
+| PROF-02 | Phase 1 | Complete |
+| PROF-03 | Phase 1 | Complete |
+| PROF-04 | Phase 1 | Complete |
+| PROF-05 | Phase 1 | Complete |
+| PROF-06 | Phase 1 | Complete |
 | LNCH-01 | Phase 2 | Pending |
 | LNCH-02 | Phase 2 | Pending |
 | LNCH-03 | Phase 2 | Pending |
 | LNCH-04 | Phase 2 | Pending |
 | LNCH-05 | Phase 2 | Pending |
 | LNCH-06 | Phase 2 | Pending |
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
-| DATA-04 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
+| DATA-04 | Phase 1 | Complete |
 | DEVX-01 | Phase 3 | Pending |
 | DEVX-02 | Phase 3 | Pending |
-| DEVX-03 | Phase 1 | Pending |
-| DEVX-04 | Phase 1 | Pending |
+| DEVX-03 | Phase 1 | Complete |
+| DEVX-04 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 20 total

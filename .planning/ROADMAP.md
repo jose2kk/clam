@@ -31,10 +31,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 5 plans
 
 Plans:
-- [ ] 01-00-PLAN.md -- Install Rust stable toolchain via rustup
-- [ ] 01-01-PLAN.md -- Cargo scaffold, core modules, and `add` command
-- [ ] 01-02-PLAN.md -- Read commands: `list`, `current`, `status`
-- [ ] 01-03-PLAN.md -- Mutating commands: `use`, `remove`
+- [x] 01-00-PLAN.md -- Install Rust stable toolchain via rustup
+- [x] 01-01-PLAN.md -- Cargo scaffold, core modules, and `add` command
+- [x] 01-02-PLAN.md -- Read commands: `list`, `current`, `status`
+- [x] 01-03-PLAN.md -- Mutating commands: `use`, `remove`
 - [ ] 01-04-PLAN.md -- End-to-end integration tests and error message audit
 
 ### Phase 2: Launch and Shell Integration
