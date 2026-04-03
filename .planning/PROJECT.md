@@ -12,20 +12,19 @@ Profile isolation — each Claude Code account's local state lives in its own di
 
 ### Validated
 
-(None yet — ship to validate)
+- User can add a named profile with isolated directory — Phase 1
+- User can list all configured profiles — Phase 1
+- User can see which profile is currently active — Phase 1
+- User can switch the active profile — Phase 1
+- User can remove a profile — Phase 1
+- Each profile maps to its own `~/.clmux/profiles/<name>/` directory — Phase 1
+- Active profile tracked in `~/.clmux/state.toml` — Phase 1
 
 ### Active
 
-- [ ] User can add a named profile with isolated directory
-- [ ] User can list all configured profiles
-- [ ] User can see which profile is currently active
-- [ ] User can switch the active profile
 - [ ] User can launch Claude Code scoped to a specific profile's environment
 - [ ] User can inspect a profile's paths and state
-- [ ] User can remove a profile
-- [ ] Each profile maps to its own `~/.clmux/profiles/<name>/` directory
 - [ ] Profiles store Claude Code auth state, config, and session data in isolation
-- [ ] Active profile tracked in `~/.clmux/state.toml`
 - [ ] Tool distributed as a single static binary (Mac + Linux)
 
 ### Out of Scope
@@ -83,4 +82,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-02 after initialization*
+*Last updated: 2026-04-03 after Phase 1 completion*
