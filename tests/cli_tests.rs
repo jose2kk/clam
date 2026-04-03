@@ -645,3 +645,314 @@ fn test_profile_dir_permissions() {
         mode
     );
 }
+
+// -- run command tests --
+
+fn create_mock_script(bin_dir: &std::path::Path, name: &str, body: &str) -> std::path::PathBuf {
+    let script_path = bin_dir.join(name);
+    std::fs::write(&script_path, format!("#!/bin/sh\n{}", body)).unwrap();
+    std::fs::set_permissions(&script_path, std::fs::Permissions::from_mode(0o755)).unwrap();
+    script_path
+}
+
+/// Helper: add a profile and return its directory path
+fn setup_profile(home: &TempDir, name: &str) -> std::path::PathBuf {
+    clmux(home).args(["add", name]).assert().success();
+    home.path().join("profiles").join(name)
+}
+
+#[test]
+fn test_run_passes_claude_config_dir() {
+    let home = TempDir::new().unwrap();
+    let bin_dir = TempDir::new().unwrap();
+
+    setup_profile(&home, "test");
+
+    let mock = create_mock_script(
+        bin_dir.path(),
+        "mock-cmd",
+        "echo \"CLAUDE_CONFIG_DIR=$CLAUDE_CONFIG_DIR\"",
+    );
+
+    let output = clmux(&home)
+        .args(["run", "--", mock.to_str().unwrap()])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    assert!(
+        stdout.contains("CLAUDE_CONFIG_DIR="),
+        "Should contain CLAUDE_CONFIG_DIR, got: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("/profiles/test"),
+        "Should point to test profile dir, got: {}",
+        stdout
+    );
+}
+
+#[test]
+fn test_run_strips_claude_env_vars() {
+    let home = TempDir::new().unwrap();
+    let bin_dir = TempDir::new().unwrap();
+
+    setup_profile(&home, "test");
+
+    let mock = create_mock_script(bin_dir.path(), "mock-cmd", "env");
+
+    let output = clmux(&home)
+        .env("CLAUDE_SOMETHING", "leak")
+        .env("ANTHROPIC_KEY", "secret")
+        .args(["run", "--", mock.to_str().unwrap()])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    assert!(
+        !stdout.contains("leak"),
+        "Should not contain leaked CLAUDE_ value, got: {}",
+        stdout
+    );
+    assert!(
+        !stdout.contains("secret"),
+        "Should not contain leaked ANTHROPIC_ value, got: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("CLAUDE_CONFIG_DIR="),
+        "Should contain injected CLAUDE_CONFIG_DIR, got: {}",
+        stdout
+    );
+}
+
+#[test]
+fn test_run_with_profile_flag() {
+    let home = TempDir::new().unwrap();
+    let bin_dir = TempDir::new().unwrap();
+
+    setup_profile(&home, "work");
+    clmux(&home).args(["add", "personal"]).assert().success();
+
+    let mock = create_mock_script(
+        bin_dir.path(),
+        "mock-cmd",
+        "echo \"CLAUDE_CONFIG_DIR=$CLAUDE_CONFIG_DIR\"",
+    );
+
+    let output = clmux(&home)
+        .args(["run", "--profile", "personal", "--", mock.to_str().unwrap()])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    assert!(
+        stdout.contains("/profiles/personal"),
+        "Should use personal profile dir, got: {}",
+        stdout
+    );
+    assert!(
+        !stdout.contains("/profiles/work"),
+        "Should NOT use work profile dir, got: {}",
+        stdout
+    );
+
+    // Verify state.toml still has active = "work" (D-05: no state change)
+    let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
+    assert!(
+        state_content.contains("active = \"work\""),
+        "Active profile should still be 'work', got: {}",
+        state_content
+    );
+}
+
+#[test]
+fn test_run_nonexistent_profile_fails() {
+    let home = TempDir::new().unwrap();
+
+    setup_profile(&home, "work");
+
+    clmux(&home)
+        .args(["run", "--profile", "ghost", "--", "echo", "hi"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("not found"))
+        .stderr(predicate::str::contains("clmux list"));
+}
+
+#[test]
+fn test_run_missing_directory_fails() {
+    let home = TempDir::new().unwrap();
+
+    let profile_dir = setup_profile(&home, "work");
+
+    // Delete the profile directory
+    std::fs::remove_dir_all(&profile_dir).unwrap();
+
+    clmux(&home)
+        .args(["run", "--", "echo", "hi"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("missing"));
+}
+
+#[test]
+fn test_run_no_active_profile_fails() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home)
+        .args(["run", "--", "echo", "hi"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("No active profile"))
+        .stderr(predicate::str::contains("clmux add"));
+}
+
+// -- env command tests --
+
+#[test]
+fn test_env_outputs_valid_export_syntax() {
+    let home = TempDir::new().unwrap();
+
+    setup_profile(&home, "work");
+
+    let output = clmux(&home)
+        .args(["env"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    // Every non-empty line should start with export or unset
+    for line in stdout.lines() {
+        if line.is_empty() {
+            continue;
+        }
+        assert!(
+            line.starts_with("export ") || line.starts_with("unset "),
+            "Line should start with 'export ' or 'unset ', got: {}",
+            line
+        );
+    }
+
+    assert!(
+        stdout.contains("export CLAUDE_CONFIG_DIR=\""),
+        "Should contain export CLAUDE_CONFIG_DIR, got: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("export CLMUX_PROFILE=\"work\";"),
+        "Should contain export CLMUX_PROFILE=\"work\", got: {}",
+        stdout
+    );
+}
+
+#[test]
+fn test_env_includes_unset_for_existing_vars() {
+    let home = TempDir::new().unwrap();
+
+    setup_profile(&home, "work");
+
+    let output = clmux(&home)
+        .env("CLAUDE_SOMETHING", "test")
+        .env("ANTHROPIC_KEY", "test")
+        .args(["env"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    assert!(
+        stdout.contains("unset CLAUDE_SOMETHING;"),
+        "Should unset CLAUDE_SOMETHING, got: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("unset ANTHROPIC_KEY;"),
+        "Should unset ANTHROPIC_KEY, got: {}",
+        stdout
+    );
+}
+
+#[test]
+fn test_env_no_active_profile_fails() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home)
+        .args(["env"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("No active profile"));
+}
+
+// -- enhanced status command tests --
+
+#[test]
+fn test_status_shows_config_dir() {
+    let home = TempDir::new().unwrap();
+
+    setup_profile(&home, "work");
+
+    let output = clmux(&home)
+        .args(["status"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    assert!(
+        stdout.contains("Config:"),
+        "Should show Config line, got: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("CLAUDE_CONFIG_DIR="),
+        "Should show CLAUDE_CONFIG_DIR value, got: {}",
+        stdout
+    );
+}
+
+#[test]
+fn test_status_shows_item_count() {
+    let home = TempDir::new().unwrap();
+
+    let profile_dir = setup_profile(&home, "work");
+
+    // Create a dummy file inside the profile directory
+    std::fs::write(profile_dir.join("settings.json"), "{}").unwrap();
+
+    let output = clmux(&home)
+        .args(["status"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    assert!(
+        stdout.contains("Items:"),
+        "Should show Items line, got: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("file(s)"),
+        "Should show file count, got: {}",
+        stdout
+    );
+}
