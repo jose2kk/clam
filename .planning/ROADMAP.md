@@ -46,7 +46,11 @@ Plans:
   2. User can run `clmux run --profile work -- --help` to launch Claude Code with a specific profile and pass-through arguments
   3. User can run `eval "$(clmux env)"` and have `CLAUDE_CONFIG_DIR` set correctly in their shell, with known Claude-related env vars stripped
   4. User can run `clmux status` and see the active profile name, directory path, and directory health
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md -- CLI extension and `run` command with exec, env sanitization, profile resolution
+- [ ] 02-02-PLAN.md -- `env` command, `status` enhancement, and integration tests
 
 ### Phase 3: Developer Experience Polish
 **Goal**: Users get shell completions and machine-parseable output for scripting and automation
@@ -65,5 +69,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and Profile Management | 0/5 | Planned | - |
-| 2. Launch and Shell Integration | 0/0 | Not started | - |
+| 2. Launch and Shell Integration | 0/2 | Planned | - |
 | 3. Developer Experience Polish | 0/0 | Not started | - |
