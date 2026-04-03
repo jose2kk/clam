@@ -59,7 +59,11 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. User can run `clmux completions zsh` (or bash/fish) and get valid shell completion scripts
   2. User can run `clmux list --json`, `clmux status --json` to get structured JSON output suitable for piping to jq
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 03-01-PLAN.md -- Shell completions command and CLI extensions for --json flags
+- [ ] 03-02-PLAN.md -- JSON output implementation for list, status, and env commands
 
 ## Progress
 
@@ -70,4 +74,4 @@ Phases execute in numeric order: 1 -> 2 -> 3
 |-------|----------------|--------|-----------|
 | 1. Foundation and Profile Management | 0/5 | Planned | - |
 | 2. Launch and Shell Integration | 0/2 | Planned | - |
-| 3. Developer Experience Polish | 0/0 | Not started | - |
+| 3. Developer Experience Polish | 0/2 | Planned | - |
