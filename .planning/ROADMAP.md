@@ -28,9 +28,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can run `clmux use work` to switch profiles and `clmux current` to confirm the switch, with state persisted across shell sessions
   4. User can run `clmux remove work` and get a confirmation prompt that refuses to remove the active profile
   5. User sees clear, actionable error messages when referencing nonexistent profiles or using invalid names (e.g., `../evil`)
-**Plans:** 4 plans
+**Plans:** 5 plans
 
 Plans:
+- [ ] 01-00-PLAN.md -- Install Rust stable toolchain via rustup
 - [ ] 01-01-PLAN.md -- Cargo scaffold, core modules, and `add` command
 - [ ] 01-02-PLAN.md -- Read commands: `list`, `current`, `status`
 - [ ] 01-03-PLAN.md -- Mutating commands: `use`, `remove`
@@ -63,6 +64,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and Profile Management | 0/4 | Planned | - |
+| 1. Foundation and Profile Management | 0/5 | Planned | - |
 | 2. Launch and Shell Integration | 0/0 | Not started | - |
 | 3. Developer Experience Polish | 0/0 | Not started | - |
