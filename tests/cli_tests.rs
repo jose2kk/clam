@@ -246,3 +246,59 @@ fn test_current_no_active_exits_1() {
 
     assert!(output.is_empty(), "stdout should be empty when no active profile");
 }
+
+// ── status command tests ──
+
+#[test]
+fn test_status_shows_active_profile() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home).args(["add", "work"]).assert().success();
+
+    let output = clmux(&home)
+        .args(["status"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    assert!(stdout.contains("Profile: work"), "Should show profile name, got: {}", stdout);
+    assert!(stdout.contains("Path:"), "Should show path line, got: {}", stdout);
+    assert!(stdout.contains("Status:"), "Should show status line, got: {}", stdout);
+    assert!(stdout.contains("ok"), "Directory exists so status should be 'ok', got: {}", stdout);
+}
+
+#[test]
+fn test_status_no_active_exits_1() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home)
+        .args(["status"])
+        .assert()
+        .code(1)
+        .stderr(predicate::str::contains("No active profile"));
+}
+
+#[test]
+fn test_status_missing_dir() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home).args(["add", "work"]).assert().success();
+
+    // Delete the profile directory to simulate missing state
+    let profile_dir = home.path().join("profiles").join("work");
+    std::fs::remove_dir_all(&profile_dir).unwrap();
+
+    let output = clmux(&home)
+        .args(["status"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    assert!(stdout.contains("missing"), "Should show 'missing' when dir doesn't exist, got: {}", stdout);
+}
