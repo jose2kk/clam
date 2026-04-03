@@ -25,4 +25,15 @@ pub enum Commands {
     },
     /// Show active profile status
     Status,
+    /// Launch a command with profile environment
+    Run {
+        /// Use a specific profile (without switching active)
+        #[arg(long)]
+        profile: Option<String>,
+        /// Command and arguments to run (default: claude)
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// Print shell environment exports for eval
+    Env,
 }

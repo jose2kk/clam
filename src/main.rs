@@ -24,5 +24,9 @@ fn run() -> anyhow::Result<()> {
         cli::Commands::Current => commands::current::execute(),
         cli::Commands::Remove { name, force } => commands::remove::execute(&name, force),
         cli::Commands::Status => commands::status::execute(),
+        cli::Commands::Run { profile, args } => {
+            commands::run::execute(profile.as_deref(), &args)
+        }
+        cli::Commands::Env => commands::env::execute(),
     }
 }
