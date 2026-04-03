@@ -302,3 +302,184 @@ fn test_status_missing_dir() {
 
     assert!(stdout.contains("missing"), "Should show 'missing' when dir doesn't exist, got: {}", stdout);
 }
+
+// ── use command tests ──
+
+#[test]
+fn use_switches_active_profile() {
+    let home = TempDir::new().unwrap();
+
+    // Add two profiles (first auto-activates)
+    clmux(&home).args(["add", "work"]).assert().success();
+    clmux(&home).args(["add", "personal"]).assert().success();
+
+    // Switch to personal
+    clmux(&home)
+        .args(["use", "personal"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Switched"));
+
+    // Verify state.toml updated
+    let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
+    assert!(
+        state_content.contains("active = \"personal\""),
+        "state.toml should have active = \"personal\", got: {}",
+        state_content
+    );
+}
+
+#[test]
+fn use_nonexistent_profile_fails() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home)
+        .args(["use", "nonexistent"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("not found"))
+        .stderr(predicate::str::contains("clmux list"));
+}
+
+#[test]
+fn use_switches_between_profiles() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home).args(["add", "work"]).assert().success();
+    clmux(&home).args(["add", "personal"]).assert().success();
+
+    // Switch to personal
+    clmux(&home).args(["use", "personal"]).assert().success();
+
+    // Switch back to work
+    clmux(&home).args(["use", "work"]).assert().success();
+
+    // Verify state.toml has work
+    let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
+    assert!(
+        state_content.contains("active = \"work\""),
+        "state.toml should have active = \"work\", got: {}",
+        state_content
+    );
+}
+
+#[test]
+fn use_invalid_name_fails() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home)
+        .args(["use", "../evil"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("invalid"));
+}
+
+// ── remove command tests ──
+
+#[test]
+fn remove_with_force_deletes_profile() {
+    let home = TempDir::new().unwrap();
+
+    // Add two profiles (first auto-activates to "work")
+    clmux(&home).args(["add", "work"]).assert().success();
+    clmux(&home).args(["add", "personal"]).assert().success();
+
+    // Switch to work so personal is not active
+    clmux(&home).args(["use", "work"]).assert().success();
+
+    // Remove personal with --force
+    clmux(&home)
+        .args(["remove", "personal", "--force"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Removed"));
+
+    // Profile directory should be gone
+    assert!(
+        !home.path().join("profiles").join("personal").exists(),
+        "Profile directory should be removed"
+    );
+
+    // config.toml should not contain "personal"
+    let config_content = std::fs::read_to_string(home.path().join("config.toml")).unwrap();
+    assert!(
+        !config_content.contains("personal"),
+        "config.toml should not contain 'personal', got: {}",
+        config_content
+    );
+}
+
+#[test]
+fn remove_active_profile_refused() {
+    let home = TempDir::new().unwrap();
+
+    // Add profile (auto-activates)
+    clmux(&home).args(["add", "work"]).assert().success();
+
+    // Try to remove active profile
+    clmux(&home)
+        .args(["remove", "work", "--force"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("Cannot remove active profile"))
+        .stderr(predicate::str::contains("clmux use"));
+}
+
+#[test]
+fn remove_nonexistent_profile_fails() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home)
+        .args(["remove", "nonexistent", "--force"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("not found"));
+}
+
+#[test]
+fn remove_no_force_non_tty_fails() {
+    let home = TempDir::new().unwrap();
+
+    // Add two profiles, switch so "personal" is not active
+    clmux(&home).args(["add", "work"]).assert().success();
+    clmux(&home).args(["add", "personal"]).assert().success();
+
+    // Remove without --force (test runner has non-TTY stdin)
+    clmux(&home)
+        .args(["remove", "personal"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("Cannot prompt"))
+        .stderr(predicate::str::contains("--force"));
+}
+
+#[test]
+fn remove_last_non_active_profile_allowed() {
+    let home = TempDir::new().unwrap();
+
+    // Add two profiles
+    clmux(&home).args(["add", "a"]).assert().success();
+    clmux(&home).args(["add", "b"]).assert().success();
+
+    // Activate "b"
+    clmux(&home).args(["use", "b"]).assert().success();
+
+    // Remove "a" (the only non-active profile)
+    clmux(&home)
+        .args(["remove", "a", "--force"])
+        .assert()
+        .success();
+
+    // Only "b" should remain in config
+    let config_content = std::fs::read_to_string(home.path().join("config.toml")).unwrap();
+    assert!(
+        !config_content.contains("\"a\""),
+        "config.toml should not contain 'a', got: {}",
+        config_content
+    );
+    assert!(
+        config_content.contains("\"b\""),
+        "config.toml should still contain 'b', got: {}",
+        config_content
+    );
+}
