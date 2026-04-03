@@ -483,3 +483,165 @@ fn remove_last_non_active_profile_allowed() {
         config_content
     );
 }
+
+// ── end-to-end lifecycle tests ──
+
+#[test]
+fn test_full_lifecycle() {
+    let home = TempDir::new().unwrap();
+
+    // Start with nothing
+    clmux(&home).arg("list").assert().success().stdout("");
+    clmux(&home).arg("current").assert().code(1).stdout("");
+
+    // Add first profile -- auto-activates (D-04)
+    clmux(&home).args(["add", "work"]).assert().success();
+    clmux(&home).arg("current").assert().success().stdout("work\n");
+
+    // Add second profile -- does NOT auto-activate (D-04)
+    clmux(&home).args(["add", "personal"]).assert().success();
+    clmux(&home).arg("current").assert().success().stdout("work\n");
+
+    // List shows both, work is active (D-01)
+    clmux(&home)
+        .arg("list")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("* work"))
+        .stdout(predicate::str::contains("  personal"));
+
+    // Switch to personal
+    clmux(&home).args(["use", "personal"]).assert().success();
+    clmux(&home)
+        .arg("current")
+        .assert()
+        .success()
+        .stdout("personal\n");
+
+    // Status shows personal info (D-02)
+    clmux(&home)
+        .arg("status")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Profile: personal"))
+        .stdout(predicate::str::contains("Status:"));
+
+    // Remove work (not active, use --force for non-TTY)
+    clmux(&home)
+        .args(["remove", "work", "--force"])
+        .assert()
+        .success();
+
+    // Verify work is gone
+    clmux(&home)
+        .arg("list")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("personal"))
+        .stdout(predicate::str::contains("work").not());
+
+    // Cannot remove active profile (D-07)
+    clmux(&home)
+        .args(["remove", "personal", "--force"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("Cannot remove active profile"));
+}
+
+#[test]
+fn test_error_messages_are_actionable() {
+    let home = TempDir::new().unwrap();
+
+    // Use nonexistent profile -> suggests clmux list
+    clmux(&home)
+        .args(["use", "ghost"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("clmux list"));
+
+    // Remove nonexistent profile -> suggests clmux list
+    clmux(&home)
+        .args(["remove", "ghost", "--force"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("clmux list"));
+
+    // Remove active profile -> suggests clmux use
+    clmux(&home).args(["add", "work"]).assert().success();
+    clmux(&home)
+        .args(["remove", "work", "--force"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("clmux use"));
+
+    // Status with no profile -> suggests clmux add
+    let home2 = TempDir::new().unwrap();
+    clmux(&home2)
+        .arg("status")
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("clmux add"));
+}
+
+#[test]
+fn test_name_validation_edge_cases() {
+    let home = TempDir::new().unwrap();
+
+    // Path traversal attempts
+    clmux(&home).args(["add", "../evil"]).assert().failure();
+    clmux(&home)
+        .args(["add", "../../etc/passwd"])
+        .assert()
+        .failure();
+    clmux(&home).args(["add", "."]).assert().failure();
+    clmux(&home).args(["add", ".."]).assert().failure();
+
+    // Invalid characters
+    clmux(&home).args(["add", "has space"]).assert().failure();
+    clmux(&home).args(["add", "has/slash"]).assert().failure();
+    clmux(&home).args(["add", ""]).assert().failure();
+
+    // Valid names
+    clmux(&home).args(["add", "valid-name"]).assert().success();
+    clmux(&home).args(["add", "valid_name"]).assert().success();
+    clmux(&home).args(["add", "CamelCase"]).assert().success();
+    clmux(&home).args(["add", "name123"]).assert().success();
+}
+
+#[test]
+fn test_exit_codes() {
+    let home = TempDir::new().unwrap();
+
+    // Success cases: exit 0
+    clmux(&home).args(["add", "work"]).assert().code(0);
+    clmux(&home).arg("list").assert().code(0);
+    clmux(&home).arg("current").assert().code(0);
+    clmux(&home).arg("status").assert().code(0);
+    clmux(&home).args(["use", "work"]).assert().code(0);
+
+    // Error cases: exit 1
+    clmux(&home).args(["use", "nonexistent"]).assert().code(1);
+    clmux(&home).args(["add", "../evil"]).assert().code(1);
+    clmux(&home)
+        .args(["remove", "work", "--force"])
+        .assert()
+        .code(1); // active profile
+
+    // Special: current with no active = exit 1
+    let home2 = TempDir::new().unwrap();
+    clmux(&home2).arg("current").assert().code(1);
+}
+
+#[cfg(unix)]
+#[test]
+fn test_profile_dir_permissions() {
+    let home = TempDir::new().unwrap();
+    clmux(&home).args(["add", "secure"]).assert().success();
+    let metadata = std::fs::metadata(home.path().join("profiles/secure")).unwrap();
+    let mode = metadata.permissions().mode() & 0o777;
+    assert_eq!(
+        mode, 0o700,
+        "Profile dir should have 0700 permissions, got {:o}",
+        mode
+    );
+}
