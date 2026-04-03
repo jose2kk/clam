@@ -29,6 +29,14 @@ pub fn execute() -> Result<()> {
     println!("Profile: {}", profile_display);
     println!("Path:    {}", dir.display());
     println!("Status:  {}", health);
+    println!("Config:  CLAUDE_CONFIG_DIR={}", dir.display());
+
+    if dir_exists {
+        let item_count = std::fs::read_dir(&dir)
+            .map(|entries| entries.count())
+            .unwrap_or(0);
+        println!("Items:   {} file(s)", item_count);
+    }
 
     Ok(())
 }
