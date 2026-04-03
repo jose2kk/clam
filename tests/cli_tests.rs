@@ -162,3 +162,74 @@ fn add_accepts_hyphens_and_underscores() {
 
     assert!(home.path().join("profiles").join("my-work_profile").exists());
 }
+
+// ── use command tests ──
+
+#[test]
+fn use_switches_active_profile() {
+    let home = TempDir::new().unwrap();
+
+    // Add two profiles (first auto-activates)
+    clmux(&home).args(["add", "work"]).assert().success();
+    clmux(&home).args(["add", "personal"]).assert().success();
+
+    // Switch to personal
+    clmux(&home)
+        .args(["use", "personal"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Switched"));
+
+    // Verify state.toml updated
+    let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
+    assert!(
+        state_content.contains("active = \"personal\""),
+        "state.toml should have active = \"personal\", got: {}",
+        state_content
+    );
+}
+
+#[test]
+fn use_nonexistent_profile_fails() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home)
+        .args(["use", "nonexistent"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("not found"))
+        .stderr(predicate::str::contains("clmux list"));
+}
+
+#[test]
+fn use_switches_between_profiles() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home).args(["add", "work"]).assert().success();
+    clmux(&home).args(["add", "personal"]).assert().success();
+
+    // Switch to personal
+    clmux(&home).args(["use", "personal"]).assert().success();
+
+    // Switch back to work
+    clmux(&home).args(["use", "work"]).assert().success();
+
+    // Verify state.toml has work
+    let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
+    assert!(
+        state_content.contains("active = \"work\""),
+        "state.toml should have active = \"work\", got: {}",
+        state_content
+    );
+}
+
+#[test]
+fn use_invalid_name_fails() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home)
+        .args(["use", "../evil"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("invalid"));
+}
