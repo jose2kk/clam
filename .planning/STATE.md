@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Phase 2 context gathered
-last_updated: "2026-04-03T18:57:53.832Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-04-03T19:32:16.301Z"
 progress:
   total_phases: 3
-  completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
+  completed_phases: 2
+  total_plans: 7
+  completed_plans: 7
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-02)
 
 **Core value:** Profile isolation -- each Claude Code account's local state lives in its own directory, switching is explicit and safe.
-**Current focus:** Phase 01 — foundation-and-profile-management
+**Current focus:** Phase 02 — launch-and-shell-integration
 
 ## Current Position
 
-Phase: 2
+Phase: 3
 Plan: Not started
 
 ## Performance Metrics
@@ -51,6 +51,8 @@ Plan: Not started
 | Phase 01 P02 | 2min | 2 tasks | 4 files |
 | Phase 01 P03 | 2min | 2 tasks | 3 files |
 | Phase 01 P04 | 3min | 2 tasks | 1 files |
+| Phase 02 P01 | 2min | 2 tasks | 5 files |
+| Phase 02 P02 | 2 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -66,6 +68,10 @@ Recent decisions affecting current work:
 - [Phase 01]: Tests verify state.toml directly rather than depending on clmux current (parallel plan)
 - [Phase 01]: Non-TTY stdin gets explicit error with --force guidance rather than silent abort
 - [Phase 01]: All error messages already DEVX-04 compliant from plans 01-02/01-03, no source changes needed in audit
+- [Phase 02]: exec() replaces clmux process for run command (no orphaned children)
+- [Phase 02]: Strip CLAUDE_*/ANTHROPIC_* but preserve CLMUX_* env vars for tooling
+- [Phase 02]: env command uses resolve_profile(None) for active profile only (D-08)
+- [Phase 02]: Status item count via read_dir().count() respects DATA-04 opaque directories
 
 ### Pending Todos
 
@@ -78,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-03T18:57:53.825Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-launch-and-shell-integration/02-CONTEXT.md
+Last session: 2026-04-03T19:29:30.995Z
+Stopped at: Completed 02-02-PLAN.md
+Resume file: None

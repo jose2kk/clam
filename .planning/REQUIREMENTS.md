@@ -18,12 +18,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Launch & Integration
 
-- [ ] **LNCH-01**: User can launch Claude Code scoped to the active profile via `clmux run [-- args]`, setting `CLAUDE_CONFIG_DIR`
-- [ ] **LNCH-02**: User can launch Claude Code with a specific profile via `clmux run --profile <name> [-- args]`
-- [ ] **LNCH-03**: `clmux run` uses Unix `exec()` to replace the process (no orphaned children, correct signal handling)
-- [ ] **LNCH-04**: `clmux run` sanitizes environment variables (strips `ANTHROPIC_API_KEY`, `CLAUDE_CONFIG_DIR`, etc.) before launching
-- [ ] **LNCH-05**: User can print shell environment exports via `clmux env` for `eval "$(clmux env)"` integration
-- [ ] **LNCH-06**: User can view verbose active profile info via `clmux status` (name, path, directory health)
+- [x] **LNCH-01**: User can launch Claude Code scoped to the active profile via `clmux run [-- args]`, setting `CLAUDE_CONFIG_DIR`
+- [x] **LNCH-02**: User can launch Claude Code with a specific profile via `clmux run --profile <name> [-- args]`
+- [x] **LNCH-03**: `clmux run` uses Unix `exec()` to replace the process (no orphaned children, correct signal handling)
+- [x] **LNCH-04**: `clmux run` sanitizes environment variables (strips `ANTHROPIC_API_KEY`, `CLAUDE_CONFIG_DIR`, etc.) before launching
+- [x] **LNCH-05**: User can print shell environment exports via `clmux env` for `eval "$(clmux env)"` integration
+- [x] **LNCH-06**: User can view verbose active profile info via `clmux status` (name, path, directory health)
 
 ### Data Integrity
 
@@ -86,12 +86,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROF-04 | Phase 1 | Complete |
 | PROF-05 | Phase 1 | Complete |
 | PROF-06 | Phase 1 | Complete |
-| LNCH-01 | Phase 2 | Pending |
-| LNCH-02 | Phase 2 | Pending |
-| LNCH-03 | Phase 2 | Pending |
-| LNCH-04 | Phase 2 | Pending |
-| LNCH-05 | Phase 2 | Pending |
-| LNCH-06 | Phase 2 | Pending |
+| LNCH-01 | Phase 2 | Complete |
+| LNCH-02 | Phase 2 | Complete |
+| LNCH-03 | Phase 2 | Complete |
+| LNCH-04 | Phase 2 | Complete |
+| LNCH-05 | Phase 2 | Complete |
+| LNCH-06 | Phase 2 | Complete |
 | DATA-01 | Phase 1 | Complete |
 | DATA-02 | Phase 1 | Complete |
 | DATA-03 | Phase 1 | Complete |

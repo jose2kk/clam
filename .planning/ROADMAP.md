@@ -49,7 +49,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- CLI extension and `run` command with exec, env sanitization, profile resolution
+- [x] 02-01-PLAN.md -- CLI extension and `run` command with exec, env sanitization, profile resolution
 - [ ] 02-02-PLAN.md -- `env` command, `status` enhancement, and integration tests
 
 ### Phase 3: Developer Experience Polish
