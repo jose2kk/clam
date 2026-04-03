@@ -1,7 +1,17 @@
 use anyhow::Result;
+use serde_json::json;
 
-pub fn execute(_json: bool) -> Result<()> {
+pub fn execute(json: bool) -> Result<()> {
     let (name, dir) = super::run::resolve_profile(None)?;
+
+    if json {
+        let output = json!({
+            "CLAUDE_CONFIG_DIR": dir.display().to_string(),
+            "CLMUX_PROFILE": name,
+        });
+        println!("{}", serde_json::to_string_pretty(&output)?);
+        return Ok(());
+    }
 
     // Unset any existing CLAUDE_* and ANTHROPIC_* vars for clean isolation
     for (key, _) in std::env::vars() {
