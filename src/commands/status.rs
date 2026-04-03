@@ -1,10 +1,11 @@
 use anyhow::Result;
 use owo_colors::OwoColorize;
 use owo_colors::Stream::Stdout;
+use serde_json::json;
 
 use crate::{paths, state};
 
-pub fn execute(_json: bool) -> Result<()> {
+pub fn execute(json: bool) -> Result<()> {
     let st = state::load()?;
 
     let active = match st.active {
@@ -17,6 +18,26 @@ pub fn execute(_json: bool) -> Result<()> {
 
     let dir = paths::profile_dir(&active)?;
     let dir_exists = dir.is_dir();
+
+    if json {
+        let item_count = if dir_exists {
+            std::fs::read_dir(&dir)
+                .map(|entries| entries.count())
+                .unwrap_or(0)
+        } else {
+            0
+        };
+
+        let output = json!({
+            "profile": active,
+            "path": dir.display().to_string(),
+            "exists": dir_exists,
+            "config_dir": dir.display().to_string(),
+            "items": item_count,
+        });
+        println!("{}", serde_json::to_string_pretty(&output)?);
+        return Ok(());
+    }
 
     let health: String = if dir_exists {
         format!("{}", "ok".if_supports_color(Stdout, |t| t.green().to_string()))
