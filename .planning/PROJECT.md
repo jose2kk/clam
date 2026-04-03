@@ -22,10 +22,12 @@ Profile isolation — each Claude Code account's local state lives in its own di
 - User can launch Claude Code scoped to a specific profile's environment — Phase 2
 - User can inspect a profile's paths and state — Phase 2
 - Profiles store Claude Code auth state, config, and session data in isolation — Phase 2
+- Shell completions for bash, zsh, and fish — Phase 3
+- Machine-parseable JSON output on list, status, env — Phase 3
 
 ### Active
 
-- [ ] Tool distributed as a single static binary (Mac + Linux)
+- [ ] Tool distributed as a single static binary (Mac + Linux) — post-v1 (cargo-dist)
 
 ### Out of Scope
 
@@ -82,4 +84,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-03 after Phase 2 completion*
+*Last updated: 2026-04-03 after Phase 3 completion — all v1 phases complete*
