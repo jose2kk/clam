@@ -162,3 +162,87 @@ fn add_accepts_hyphens_and_underscores() {
 
     assert!(home.path().join("profiles").join("my-work_profile").exists());
 }
+
+// ── list command tests ──
+
+#[test]
+fn test_list_shows_active_marker() {
+    let home = TempDir::new().unwrap();
+
+    // Add two profiles (first auto-activates)
+    clmux(&home).args(["add", "work"]).assert().success();
+    clmux(&home).args(["add", "personal"]).assert().success();
+
+    let output = clmux(&home)
+        .args(["list"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    assert!(stdout.contains("* work"), "Active profile should have '* ' prefix, got: {}", stdout);
+    assert!(stdout.contains("  personal"), "Inactive profile should have '  ' prefix, got: {}", stdout);
+}
+
+#[test]
+fn test_list_empty() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home)
+        .args(["list"])
+        .assert()
+        .success()
+        .stdout(predicate::str::is_empty());
+}
+
+#[test]
+fn test_list_no_ansi_when_piped() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home).args(["add", "work"]).assert().success();
+
+    // assert_cmd runs without a TTY, so output should have no ANSI codes
+    let output = clmux(&home)
+        .args(["list"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let stdout = String::from_utf8(output).unwrap();
+
+    // ANSI escape codes start with \x1b[
+    assert!(!stdout.contains('\x1b'), "Piped output should not contain ANSI escape codes, got: {:?}", stdout);
+}
+
+// ── current command tests ──
+
+#[test]
+fn test_current_prints_active() {
+    let home = TempDir::new().unwrap();
+
+    clmux(&home).args(["add", "work"]).assert().success();
+
+    clmux(&home)
+        .args(["current"])
+        .assert()
+        .success()
+        .stdout("work\n");
+}
+
+#[test]
+fn test_current_no_active_exits_1() {
+    let home = TempDir::new().unwrap();
+
+    let output = clmux(&home)
+        .args(["current"])
+        .assert()
+        .code(1)
+        .get_output()
+        .stdout
+        .clone();
+
+    assert!(output.is_empty(), "stdout should be empty when no active profile");
+}
