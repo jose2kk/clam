@@ -4,7 +4,7 @@ use owo_colors::Stream::Stdout;
 
 use crate::{config, state};
 
-pub fn execute() -> Result<()> {
+pub fn execute(_json: bool) -> Result<()> {
     let cfg = config::load()?;
     let st = state::load()?;
     let active = st.active.as_deref();

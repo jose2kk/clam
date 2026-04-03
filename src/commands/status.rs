@@ -4,7 +4,7 @@ use owo_colors::Stream::Stdout;
 
 use crate::{paths, state};
 
-pub fn execute() -> Result<()> {
+pub fn execute(_json: bool) -> Result<()> {
     let st = state::load()?;
 
     let active = match st.active {

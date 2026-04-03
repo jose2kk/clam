@@ -1,4 +1,5 @@
 pub mod add;
+pub mod completions;
 pub mod current;
 pub mod env;
 pub mod list;

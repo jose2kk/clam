@@ -1,4 +1,11 @@
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
+
+#[derive(Clone, ValueEnum)]
+pub enum Shell {
+    Bash,
+    Zsh,
+    Fish,
+}
 
 #[derive(Parser)]
 #[command(name = "clmux", about = "Manage Claude Code profiles")]
@@ -12,7 +19,10 @@ pub enum Commands {
     /// Create a new profile
     Add { name: String },
     /// List all profiles
-    List,
+    List {
+        #[arg(long)]
+        json: bool,
+    },
     /// Switch active profile
     Use { name: String },
     /// Print active profile name
@@ -24,7 +34,10 @@ pub enum Commands {
         force: bool,
     },
     /// Show active profile status
-    Status,
+    Status {
+        #[arg(long)]
+        json: bool,
+    },
     /// Launch a command with profile environment
     Run {
         /// Use a specific profile (without switching active)
@@ -35,5 +48,13 @@ pub enum Commands {
         args: Vec<String>,
     },
     /// Print shell environment exports for eval
-    Env,
+    Env {
+        #[arg(long)]
+        json: bool,
+    },
+    /// Generate shell completions
+    Completions {
+        /// Shell to generate completions for
+        shell: Shell,
+    },
 }

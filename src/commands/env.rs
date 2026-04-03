@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-pub fn execute() -> Result<()> {
+pub fn execute(_json: bool) -> Result<()> {
     let (name, dir) = super::run::resolve_profile(None)?;
 
     // Unset any existing CLAUDE_* and ANTHROPIC_* vars for clean isolation
