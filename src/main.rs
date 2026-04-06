@@ -26,6 +26,9 @@ fn run() -> anyhow::Result<()> {
         cli::Commands::Status { json } => commands::status::execute(json),
         cli::Commands::Run { profile, args } => commands::run::execute(profile.as_deref(), &args),
         cli::Commands::Env { json } => commands::env::execute(json),
-        cli::Commands::Completions { shell } => commands::completions::execute(&shell),
+        cli::Commands::Completions { shell } => {
+            commands::completions::execute(&shell);
+            Ok(())
+        }
     }
 }

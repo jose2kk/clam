@@ -1,11 +1,10 @@
-use anyhow::Result;
 use clap::CommandFactory;
 use clap_complete::{generate, Shell as ClapShell};
 use std::io;
 
 use crate::cli::{Cli, Shell};
 
-pub fn execute(shell: &Shell) -> Result<()> {
+pub fn execute(shell: &Shell) {
     let mut cmd = Cli::command();
     let clap_shell = match shell {
         Shell::Bash => ClapShell::Bash,
@@ -13,5 +12,4 @@ pub fn execute(shell: &Shell) -> Result<()> {
         Shell::Fish => ClapShell::Fish,
     };
     generate(clap_shell, &mut cmd, "clmux", &mut io::stdout());
-    Ok(())
 }

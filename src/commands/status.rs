@@ -8,9 +8,7 @@ use crate::{paths, state};
 pub fn execute(json: bool) -> Result<()> {
     let st = state::load()?;
 
-    let active = if let Some(name) = st.active {
-        name
-    } else {
+    let Some(active) = st.active else {
         eprintln!("No active profile. Run `clmux add <name>` to create one.");
         std::process::exit(1);
     };
