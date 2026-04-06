@@ -10,7 +10,7 @@ use clap::Parser;
 
 fn main() {
     if let Err(e) = run() {
-        output::error(&format!("{:#}", e));
+        output::error(&format!("{e:#}"));
         std::process::exit(1);
     }
 }
@@ -24,9 +24,7 @@ fn run() -> anyhow::Result<()> {
         cli::Commands::Current => commands::current::execute(),
         cli::Commands::Remove { name, force } => commands::remove::execute(&name, force),
         cli::Commands::Status { json } => commands::status::execute(json),
-        cli::Commands::Run { profile, args } => {
-            commands::run::execute(profile.as_deref(), &args)
-        }
+        cli::Commands::Run { profile, args } => commands::run::execute(profile.as_deref(), &args),
         cli::Commands::Env { json } => commands::env::execute(json),
         cli::Commands::Completions { shell } => commands::completions::execute(&shell),
     }

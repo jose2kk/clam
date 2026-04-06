@@ -11,18 +11,14 @@ pub fn execute(name: &str, force: bool) -> Result<()> {
     // 2. Check profile exists in registry
     let mut cfg = config::load()?;
     if !cfg.profiles.iter().any(|p| p.name == name) {
-        anyhow::bail!(
-            "Profile '{}' not found. Run `clmux list` to see available profiles.",
-            name
-        );
+        anyhow::bail!("Profile '{name}' not found. Run `clmux list` to see available profiles.");
     }
 
     // 3. Refuse to remove active profile (D-07)
     let st = state::load()?;
     if st.active.as_deref() == Some(name) {
         anyhow::bail!(
-            "Cannot remove active profile '{}'. Switch to another profile first with `clmux use <name>`.",
-            name
+            "Cannot remove active profile '{name}'. Switch to another profile first with `clmux use <name>`."
         );
     }
 
@@ -30,11 +26,10 @@ pub fn execute(name: &str, force: bool) -> Result<()> {
     if !force {
         if !io::stdin().is_terminal() {
             anyhow::bail!(
-                "Cannot prompt for confirmation. Use `clmux remove {} --force` to skip.",
-                name
+                "Cannot prompt for confirmation. Use `clmux remove {name} --force` to skip."
             );
         }
-        print!("Remove profile {}? [y/N] ", name);
+        print!("Remove profile {name}? [y/N] ");
         io::stdout().flush()?;
         let mut input = String::new();
         io::stdin().read_line(&mut input)?;
@@ -55,6 +50,6 @@ pub fn execute(name: &str, force: bool) -> Result<()> {
     cfg.profiles.retain(|p| p.name != name);
     config::save(&cfg)?;
 
-    output::success(&format!("Removed profile '{}'.", name));
+    output::success(&format!("Removed profile '{name}'."));
     Ok(())
 }

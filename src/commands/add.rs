@@ -11,7 +11,7 @@ pub fn execute(name: &str, inherit: bool) -> Result<()> {
 
     // 3. Check if profile already exists in registry
     if cfg.profiles.iter().any(|p| p.name == name) {
-        anyhow::bail!("Profile '{}' already exists.", name);
+        anyhow::bail!("Profile '{name}' already exists.");
     }
 
     // 4. Create profile directory with 0700 permissions (DATA-03, DATA-04)
@@ -36,9 +36,9 @@ pub fn execute(name: &str, inherit: bool) -> Result<()> {
         let mut st = state::load()?;
         st.active = Some(name.to_string());
         state::save(&st)?;
-        output::success(&format!("Created and activated profile '{}'.", name));
+        output::success(&format!("Created and activated profile '{name}'."));
     } else {
-        output::success(&format!("Created profile '{}'.", name));
+        output::success(&format!("Created profile '{name}'."));
     }
 
     if inherit {
@@ -95,9 +95,8 @@ fn inherit_global_config(name: &str) -> Result<()> {
 
         let target = profile_dir.join(&file_name);
         if !target.exists() {
-            std::os::unix::fs::symlink(entry.path(), &target).with_context(|| {
-                format!("Failed to symlink {} into profile", name_str)
-            })?;
+            std::os::unix::fs::symlink(entry.path(), &target)
+                .with_context(|| format!("Failed to symlink {name_str} into profile"))?;
         }
     }
 

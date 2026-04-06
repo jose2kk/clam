@@ -6,7 +6,7 @@ pub fn execute() -> Result<()> {
     let st = state::load()?;
     match st.active {
         Some(name) => {
-            println!("{}", name);
+            println!("{name}");
             Ok(())
         }
         None => {

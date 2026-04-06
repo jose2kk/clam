@@ -12,8 +12,7 @@ pub fn validate_profile_name(name: &str) -> Result<()> {
     }
     if name == "." || name == ".." {
         bail!(
-            "Profile name '{}' is invalid. Use only letters, numbers, hyphens, and underscores.",
-            name
+            "Profile name '{name}' is invalid. Use only letters, numbers, hyphens, and underscores."
         );
     }
     let valid = name
@@ -21,8 +20,7 @@ pub fn validate_profile_name(name: &str) -> Result<()> {
         .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_');
     if !valid {
         bail!(
-            "Profile name '{}' is invalid. Use only letters, numbers, hyphens, and underscores.",
-            name
+            "Profile name '{name}' is invalid. Use only letters, numbers, hyphens, and underscores."
         );
     }
     Ok(())
@@ -38,13 +36,17 @@ pub fn create_profile_dir(name: &str) -> Result<()> {
 
     let dir = paths::profile_dir(name)?;
     if dir.exists() {
-        bail!("Profile '{}' already exists.", name);
+        bail!("Profile '{name}' already exists.");
     }
 
     // Ensure parent profiles/ directory exists
     if let Some(parent) = dir.parent() {
-        std::fs::create_dir_all(parent)
-            .with_context(|| format!("Failed to create profiles directory at {}", parent.display()))?;
+        std::fs::create_dir_all(parent).with_context(|| {
+            format!(
+                "Failed to create profiles directory at {}",
+                parent.display()
+            )
+        })?;
     }
 
     // Create profile directory with 0700 permissions

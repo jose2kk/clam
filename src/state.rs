@@ -14,8 +14,8 @@ pub fn load() -> Result<State> {
     if !path.exists() {
         return Ok(State::default());
     }
-    let content =
-        std::fs::read_to_string(&path).with_context(|| format!("Failed to read {}", path.display()))?;
+    let content = std::fs::read_to_string(&path)
+        .with_context(|| format!("Failed to read {}", path.display()))?;
     let state: State =
         toml::from_str(&content).with_context(|| format!("Failed to parse {}", path.display()))?;
     Ok(state)

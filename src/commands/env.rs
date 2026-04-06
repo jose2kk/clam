@@ -16,13 +16,13 @@ pub fn execute(json: bool) -> Result<()> {
     // Unset any existing CLAUDE_* and ANTHROPIC_* vars for clean isolation
     for (key, _) in std::env::vars() {
         if key.starts_with("CLAUDE_") || key.starts_with("ANTHROPIC_") {
-            println!("unset {};", key);
+            println!("unset {key};");
         }
     }
 
     // Export profile-scoped environment
     println!("export CLAUDE_CONFIG_DIR=\"{}\";", dir.display());
-    println!("export CLMUX_PROFILE=\"{}\";", name);
+    println!("export CLMUX_PROFILE=\"{name}\";");
 
     Ok(())
 }

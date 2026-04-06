@@ -40,11 +40,9 @@ pub fn atomic_write(path: &std::path::Path, content: &str) -> Result<()> {
             .with_context(|| format!("Failed to create directory {}", parent.display()))?;
     }
 
-    let mut tmp = NamedTempFile::new_in(
-        path.parent()
-            .context("File path has no parent directory")?,
-    )
-    .context("Failed to create temporary file")?;
+    let mut tmp =
+        NamedTempFile::new_in(path.parent().context("File path has no parent directory")?)
+            .context("Failed to create temporary file")?;
 
     tmp.write_all(content.as_bytes())
         .context("Failed to write temporary file")?;

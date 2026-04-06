@@ -8,12 +8,11 @@ use crate::{paths, state};
 pub fn execute(json: bool) -> Result<()> {
     let st = state::load()?;
 
-    let active = match st.active {
-        Some(name) => name,
-        None => {
-            eprintln!("No active profile. Run `clmux add <name>` to create one.");
-            std::process::exit(1);
-        }
+    let active = if let Some(name) = st.active {
+        name
+    } else {
+        eprintln!("No active profile. Run `clmux add <name>` to create one.");
+        std::process::exit(1);
     };
 
     let dir = paths::profile_dir(&active)?;
@@ -22,7 +21,7 @@ pub fn execute(json: bool) -> Result<()> {
     if json {
         let item_count = if dir_exists {
             std::fs::read_dir(&dir)
-                .map(|entries| entries.count())
+                .map(std::iter::Iterator::count)
                 .unwrap_or(0)
         } else {
             0
@@ -40,23 +39,32 @@ pub fn execute(json: bool) -> Result<()> {
     }
 
     let health: String = if dir_exists {
-        format!("{}", "ok".if_supports_color(Stdout, |t| t.green().to_string()))
+        format!(
+            "{}",
+            "ok".if_supports_color(Stdout, |t| t.green().to_string())
+        )
     } else {
-        format!("{}", "missing".if_supports_color(Stdout, |t| t.red().to_string()))
+        format!(
+            "{}",
+            "missing".if_supports_color(Stdout, |t| t.red().to_string())
+        )
     };
 
-    let profile_display = format!("{}", active.if_supports_color(Stdout, |t| t.bold().to_string()));
+    let profile_display = format!(
+        "{}",
+        active.if_supports_color(Stdout, |t| t.bold().to_string())
+    );
 
-    println!("Profile: {}", profile_display);
+    println!("Profile: {profile_display}");
     println!("Path:    {}", dir.display());
-    println!("Status:  {}", health);
+    println!("Status:  {health}");
     println!("Config:  CLAUDE_CONFIG_DIR={}", dir.display());
 
     if dir_exists {
         let item_count = std::fs::read_dir(&dir)
-            .map(|entries| entries.count())
+            .map(std::iter::Iterator::count)
             .unwrap_or(0);
-        println!("Items:   {} file(s)", item_count);
+        println!("Items:   {item_count} file(s)");
     }
 
     Ok(())

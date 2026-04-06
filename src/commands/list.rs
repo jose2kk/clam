@@ -34,7 +34,7 @@ pub fn execute(json: bool) -> Result<()> {
             let styled = profile
                 .name
                 .if_supports_color(Stdout, |t| t.green().bold().to_string());
-            println!("* {}", styled);
+            println!("* {styled}");
         } else {
             println!("  {}", profile.name);
         }

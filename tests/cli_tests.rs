@@ -50,8 +50,7 @@ fn add_first_profile_auto_activates() {
     let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
     assert!(
         state_content.contains("active = \"work\""),
-        "state.toml should have active = \"work\", got: {}",
-        state_content
+        "state.toml should have active = \"work\", got: {state_content}"
     );
 }
 
@@ -73,8 +72,7 @@ fn add_second_profile_does_not_auto_activate() {
     let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
     assert!(
         state_content.contains("active = \"work\""),
-        "active should still be 'work', got: {}",
-        state_content
+        "active should still be 'work', got: {state_content}"
     );
 
     // personal profile directory should exist
@@ -160,7 +158,11 @@ fn add_accepts_hyphens_and_underscores() {
         .assert()
         .success();
 
-    assert!(home.path().join("profiles").join("my-work_profile").exists());
+    assert!(home
+        .path()
+        .join("profiles")
+        .join("my-work_profile")
+        .exists());
 }
 
 // ── list command tests ──
@@ -182,8 +184,14 @@ fn test_list_shows_active_marker() {
         .clone();
     let stdout = String::from_utf8(output).unwrap();
 
-    assert!(stdout.contains("* work"), "Active profile should have '* ' prefix, got: {}", stdout);
-    assert!(stdout.contains("  personal"), "Inactive profile should have '  ' prefix, got: {}", stdout);
+    assert!(
+        stdout.contains("* work"),
+        "Active profile should have '* ' prefix, got: {stdout}"
+    );
+    assert!(
+        stdout.contains("  personal"),
+        "Inactive profile should have '  ' prefix, got: {stdout}"
+    );
 }
 
 #[test]
@@ -214,7 +222,10 @@ fn test_list_no_ansi_when_piped() {
     let stdout = String::from_utf8(output).unwrap();
 
     // ANSI escape codes start with \x1b[
-    assert!(!stdout.contains('\x1b'), "Piped output should not contain ANSI escape codes, got: {:?}", stdout);
+    assert!(
+        !stdout.contains('\x1b'),
+        "Piped output should not contain ANSI escape codes, got: {stdout:?}"
+    );
 }
 
 // ── current command tests ──
@@ -244,7 +255,10 @@ fn test_current_no_active_exits_1() {
         .stdout
         .clone();
 
-    assert!(output.is_empty(), "stdout should be empty when no active profile");
+    assert!(
+        output.is_empty(),
+        "stdout should be empty when no active profile"
+    );
 }
 
 // ── status command tests ──
@@ -264,10 +278,22 @@ fn test_status_shows_active_profile() {
         .clone();
     let stdout = String::from_utf8(output).unwrap();
 
-    assert!(stdout.contains("Profile: work"), "Should show profile name, got: {}", stdout);
-    assert!(stdout.contains("Path:"), "Should show path line, got: {}", stdout);
-    assert!(stdout.contains("Status:"), "Should show status line, got: {}", stdout);
-    assert!(stdout.contains("ok"), "Directory exists so status should be 'ok', got: {}", stdout);
+    assert!(
+        stdout.contains("Profile: work"),
+        "Should show profile name, got: {stdout}"
+    );
+    assert!(
+        stdout.contains("Path:"),
+        "Should show path line, got: {stdout}"
+    );
+    assert!(
+        stdout.contains("Status:"),
+        "Should show status line, got: {stdout}"
+    );
+    assert!(
+        stdout.contains("ok"),
+        "Directory exists so status should be 'ok', got: {stdout}"
+    );
 }
 
 #[test]
@@ -300,7 +326,10 @@ fn test_status_missing_dir() {
         .clone();
     let stdout = String::from_utf8(output).unwrap();
 
-    assert!(stdout.contains("missing"), "Should show 'missing' when dir doesn't exist, got: {}", stdout);
+    assert!(
+        stdout.contains("missing"),
+        "Should show 'missing' when dir doesn't exist, got: {stdout}"
+    );
 }
 
 // ── use command tests ──
@@ -324,8 +353,7 @@ fn use_switches_active_profile() {
     let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
     assert!(
         state_content.contains("active = \"personal\""),
-        "state.toml should have active = \"personal\", got: {}",
-        state_content
+        "state.toml should have active = \"personal\", got: {state_content}"
     );
 }
 
@@ -358,8 +386,7 @@ fn use_switches_between_profiles() {
     let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
     assert!(
         state_content.contains("active = \"work\""),
-        "state.toml should have active = \"work\", got: {}",
-        state_content
+        "state.toml should have active = \"work\", got: {state_content}"
     );
 }
 
@@ -404,8 +431,7 @@ fn remove_with_force_deletes_profile() {
     let config_content = std::fs::read_to_string(home.path().join("config.toml")).unwrap();
     assert!(
         !config_content.contains("personal"),
-        "config.toml should not contain 'personal', got: {}",
-        config_content
+        "config.toml should not contain 'personal', got: {config_content}"
     );
 }
 
@@ -474,13 +500,11 @@ fn remove_last_non_active_profile_allowed() {
     let config_content = std::fs::read_to_string(home.path().join("config.toml")).unwrap();
     assert!(
         !config_content.contains("\"a\""),
-        "config.toml should not contain 'a', got: {}",
-        config_content
+        "config.toml should not contain 'a', got: {config_content}"
     );
     assert!(
         config_content.contains("\"b\""),
-        "config.toml should still contain 'b', got: {}",
-        config_content
+        "config.toml should still contain 'b', got: {config_content}"
     );
 }
 
@@ -496,11 +520,19 @@ fn test_full_lifecycle() {
 
     // Add first profile -- auto-activates (D-04)
     clmux(&home).args(["add", "work"]).assert().success();
-    clmux(&home).arg("current").assert().success().stdout("work\n");
+    clmux(&home)
+        .arg("current")
+        .assert()
+        .success()
+        .stdout("work\n");
 
     // Add second profile -- does NOT auto-activate (D-04)
     clmux(&home).args(["add", "personal"]).assert().success();
-    clmux(&home).arg("current").assert().success().stdout("work\n");
+    clmux(&home)
+        .arg("current")
+        .assert()
+        .success()
+        .stdout("work\n");
 
     // List shows both, work is active (D-01)
     clmux(&home)
@@ -641,8 +673,7 @@ fn test_profile_dir_permissions() {
     let mode = metadata.permissions().mode() & 0o777;
     assert_eq!(
         mode, 0o700,
-        "Profile dir should have 0700 permissions, got {:o}",
-        mode
+        "Profile dir should have 0700 permissions, got {mode:o}"
     );
 }
 
@@ -650,7 +681,7 @@ fn test_profile_dir_permissions() {
 
 fn create_mock_script(bin_dir: &std::path::Path, name: &str, body: &str) -> std::path::PathBuf {
     let script_path = bin_dir.join(name);
-    std::fs::write(&script_path, format!("#!/bin/sh\n{}", body)).unwrap();
+    std::fs::write(&script_path, format!("#!/bin/sh\n{body}")).unwrap();
     std::fs::set_permissions(&script_path, std::fs::Permissions::from_mode(0o755)).unwrap();
     script_path
 }
@@ -685,13 +716,11 @@ fn test_run_passes_claude_config_dir() {
 
     assert!(
         stdout.contains("CLAUDE_CONFIG_DIR="),
-        "Should contain CLAUDE_CONFIG_DIR, got: {}",
-        stdout
+        "Should contain CLAUDE_CONFIG_DIR, got: {stdout}"
     );
     assert!(
         stdout.contains("/profiles/test"),
-        "Should point to test profile dir, got: {}",
-        stdout
+        "Should point to test profile dir, got: {stdout}"
     );
 }
 
@@ -717,18 +746,15 @@ fn test_run_strips_claude_env_vars() {
 
     assert!(
         !stdout.contains("leak"),
-        "Should not contain leaked CLAUDE_ value, got: {}",
-        stdout
+        "Should not contain leaked CLAUDE_ value, got: {stdout}"
     );
     assert!(
         !stdout.contains("secret"),
-        "Should not contain leaked ANTHROPIC_ value, got: {}",
-        stdout
+        "Should not contain leaked ANTHROPIC_ value, got: {stdout}"
     );
     assert!(
         stdout.contains("CLAUDE_CONFIG_DIR="),
-        "Should contain injected CLAUDE_CONFIG_DIR, got: {}",
-        stdout
+        "Should contain injected CLAUDE_CONFIG_DIR, got: {stdout}"
     );
 }
 
@@ -757,21 +783,18 @@ fn test_run_with_profile_flag() {
 
     assert!(
         stdout.contains("/profiles/personal"),
-        "Should use personal profile dir, got: {}",
-        stdout
+        "Should use personal profile dir, got: {stdout}"
     );
     assert!(
         !stdout.contains("/profiles/work"),
-        "Should NOT use work profile dir, got: {}",
-        stdout
+        "Should NOT use work profile dir, got: {stdout}"
     );
 
     // Verify state.toml still has active = "work" (D-05: no state change)
     let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
     assert!(
         state_content.contains("active = \"work\""),
-        "Active profile should still be 'work', got: {}",
-        state_content
+        "Active profile should still be 'work', got: {state_content}"
     );
 }
 
@@ -841,20 +864,17 @@ fn test_env_outputs_valid_export_syntax() {
         }
         assert!(
             line.starts_with("export ") || line.starts_with("unset "),
-            "Line should start with 'export ' or 'unset ', got: {}",
-            line
+            "Line should start with 'export ' or 'unset ', got: {line}"
         );
     }
 
     assert!(
         stdout.contains("export CLAUDE_CONFIG_DIR=\""),
-        "Should contain export CLAUDE_CONFIG_DIR, got: {}",
-        stdout
+        "Should contain export CLAUDE_CONFIG_DIR, got: {stdout}"
     );
     assert!(
         stdout.contains("export CLMUX_PROFILE=\"work\";"),
-        "Should contain export CLMUX_PROFILE=\"work\", got: {}",
-        stdout
+        "Should contain export CLMUX_PROFILE=\"work\", got: {stdout}"
     );
 }
 
@@ -877,13 +897,11 @@ fn test_env_includes_unset_for_existing_vars() {
 
     assert!(
         stdout.contains("unset CLAUDE_SOMETHING;"),
-        "Should unset CLAUDE_SOMETHING, got: {}",
-        stdout
+        "Should unset CLAUDE_SOMETHING, got: {stdout}"
     );
     assert!(
         stdout.contains("unset ANTHROPIC_KEY;"),
-        "Should unset ANTHROPIC_KEY, got: {}",
-        stdout
+        "Should unset ANTHROPIC_KEY, got: {stdout}"
     );
 }
 
@@ -917,13 +935,11 @@ fn test_status_shows_config_dir() {
 
     assert!(
         stdout.contains("Config:"),
-        "Should show Config line, got: {}",
-        stdout
+        "Should show Config line, got: {stdout}"
     );
     assert!(
         stdout.contains("CLAUDE_CONFIG_DIR="),
-        "Should show CLAUDE_CONFIG_DIR value, got: {}",
-        stdout
+        "Should show CLAUDE_CONFIG_DIR value, got: {stdout}"
     );
 }
 
@@ -947,12 +963,10 @@ fn test_status_shows_item_count() {
 
     assert!(
         stdout.contains("Items:"),
-        "Should show Items line, got: {}",
-        stdout
+        "Should show Items line, got: {stdout}"
     );
     assert!(
         stdout.contains("file(s)"),
-        "Should show file count, got: {}",
-        stdout
+        "Should show file count, got: {stdout}"
     );
 }
