@@ -91,8 +91,7 @@ mod tests {
         let err = validate_profile_name("").unwrap_err();
         assert!(
             err.to_string().contains("empty"),
-            "Error should mention 'empty', got: {}",
-            err
+            "Error should mention 'empty', got: {err}",
         );
     }
 
