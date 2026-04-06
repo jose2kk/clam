@@ -29,6 +29,9 @@ cargo build --release
 # Create your first profile (auto-activates)
 clmux add work
 
+# Or inherit your global Claude Code config (settings, extensions, tools)
+clmux add work --inherit
+
 # Create a second profile
 clmux add personal
 
@@ -65,13 +68,14 @@ Each profile maps to an isolated directory at `~/.clmux/profiles/<name>/`. When 
 ### Profile Management
 
 ```sh
-clmux add <name>        # Create a new profile
-clmux list              # List all profiles (* marks active)
-clmux use <name>        # Switch active profile
-clmux current           # Print active profile name (for scripts)
-clmux remove <name>     # Remove a profile (prompts for confirmation)
-clmux remove <name> --force  # Remove without confirmation
-clmux status            # Show active profile details
+clmux add <name>              # Create a new profile
+clmux add <name> --inherit    # Create and inherit global Claude Code config
+clmux list                    # List all profiles (* marks active)
+clmux use <name>              # Switch active profile
+clmux current                 # Print active profile name (for scripts)
+clmux remove <name>           # Remove a profile (prompts for confirmation)
+clmux remove <name> --force   # Remove without confirmation
+clmux status                  # Show active profile details
 ```
 
 ### Launch & Shell Integration
@@ -147,6 +151,18 @@ clmux list --json | jq -r '.[].name'
 | `CLMUX_PROFILE` | Set by `clmux run` and `clmux env` to the active profile name |
 | `CLAUDE_CONFIG_DIR` | Set by `clmux run` and `clmux env` to the profile's directory |
 | `NO_COLOR` | Disable colored output (respected automatically) |
+
+## Inheriting Global Config
+
+By default, new profiles start empty. Use `--inherit` to symlink your global Claude Code config (`~/.claude/`) into the profile:
+
+```sh
+clmux add work --inherit
+```
+
+This symlinks shared items like `settings.json`, custom agents, skills, and tools (e.g., GSD) so they're available in the new profile. Session-specific items (auth, history, cache) are skipped — those stay isolated per profile.
+
+Use `--inherit` if you have custom Claude Code extensions you want across all profiles. Skip it for a clean slate.
 
 ## Profile Names
 

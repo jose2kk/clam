@@ -18,7 +18,7 @@ fn main() {
 fn run() -> anyhow::Result<()> {
     let cli = cli::Cli::parse();
     match cli.command {
-        cli::Commands::Add { name } => commands::add::execute(&name),
+        cli::Commands::Add { name, inherit } => commands::add::execute(&name, inherit),
         cli::Commands::List { json } => commands::list::execute(json),
         cli::Commands::Use { name } => commands::use_cmd::execute(&name),
         cli::Commands::Current => commands::current::execute(),

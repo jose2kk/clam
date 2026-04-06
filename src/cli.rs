@@ -17,7 +17,12 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     /// Create a new profile
-    Add { name: String },
+    Add {
+        name: String,
+        /// Symlink global Claude Code config (~/.claude/) into the profile
+        #[arg(long)]
+        inherit: bool,
+    },
     /// List all profiles
     List {
         #[arg(long)]
