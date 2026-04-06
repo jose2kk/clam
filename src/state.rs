@@ -31,10 +31,7 @@ pub fn save(state: &State) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::Mutex;
-
-    /// Mutex to serialize tests that modify `CLMUX_HOME` env var.
-    static ENV_LOCK: Mutex<()> = Mutex::new(());
+    use crate::test_utils::ENV_LOCK;
 
     #[test]
     fn test_default_state_round_trip() {

@@ -6,6 +6,13 @@ mod paths;
 mod profile;
 mod state;
 
+#[cfg(test)]
+mod test_utils {
+    /// Shared mutex for tests that modify `CLMUX_HOME` env var.
+    /// All modules must use this single lock to prevent cross-module races.
+    pub static ENV_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+}
+
 use clap::Parser;
 
 fn main() {

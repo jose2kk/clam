@@ -57,11 +57,7 @@ pub fn atomic_write(path: &std::path::Path, content: &str) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::Mutex;
-
-    /// Guard for tests that mutate CLMUX_HOME env var.
-    /// Prevents parallel test execution from seeing each other's env changes.
-    static ENV_LOCK: Mutex<()> = Mutex::new(());
+    use crate::test_utils::ENV_LOCK;
 
     // --- base_dir() tests (TEST-04) ---
 
