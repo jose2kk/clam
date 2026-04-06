@@ -53,3 +53,97 @@ pub fn atomic_write(path: &std::path::Path, content: &str) -> Result<()> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::Mutex;
+
+    /// Guard for tests that mutate CLMUX_HOME env var.
+    /// Prevents parallel test execution from seeing each other's env changes.
+    static ENV_LOCK: Mutex<()> = Mutex::new(());
+
+    // --- base_dir() tests (TEST-04) ---
+
+    #[test]
+    fn test_base_dir_respects_clmux_home() -> anyhow::Result<()> {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let tmp = tempfile::tempdir()?;
+        std::env::set_var("CLMUX_HOME", tmp.path());
+
+        let result = base_dir()?;
+        assert_eq!(result, tmp.path());
+
+        std::env::remove_var("CLMUX_HOME");
+        Ok(())
+    }
+
+    #[test]
+    fn test_base_dir_defaults_to_home_clmux() -> anyhow::Result<()> {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("CLMUX_HOME");
+
+        let result = base_dir()?;
+        assert!(
+            result.ends_with(".clmux"),
+            "Expected path ending with .clmux, got: {}",
+            result.display()
+        );
+
+        Ok(())
+    }
+
+    // --- profile_dir() tests (TEST-04) ---
+
+    #[test]
+    fn test_profile_dir_appends_name() -> anyhow::Result<()> {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let tmp = tempfile::tempdir()?;
+        std::env::set_var("CLMUX_HOME", tmp.path());
+
+        let result = profile_dir("work")?;
+        assert_eq!(result, tmp.path().join("profiles").join("work"));
+
+        std::env::remove_var("CLMUX_HOME");
+        Ok(())
+    }
+
+    // --- atomic_write() tests (TEST-05) ---
+
+    #[test]
+    fn test_atomic_write_creates_file() -> anyhow::Result<()> {
+        let tmp = tempfile::tempdir()?;
+        let path = tmp.path().join("test.txt");
+
+        atomic_write(&path, "hello")?;
+
+        let content = std::fs::read_to_string(&path)?;
+        assert_eq!(content, "hello");
+        Ok(())
+    }
+
+    #[test]
+    fn test_atomic_write_creates_parent_dirs() -> anyhow::Result<()> {
+        let tmp = tempfile::tempdir()?;
+        let path = tmp.path().join("nested").join("dir").join("file.txt");
+
+        atomic_write(&path, "nested content")?;
+
+        let content = std::fs::read_to_string(&path)?;
+        assert_eq!(content, "nested content");
+        Ok(())
+    }
+
+    #[test]
+    fn test_atomic_write_overwrites_existing() -> anyhow::Result<()> {
+        let tmp = tempfile::tempdir()?;
+        let path = tmp.path().join("test.txt");
+
+        atomic_write(&path, "first")?;
+        atomic_write(&path, "second")?;
+
+        let content = std::fs::read_to_string(&path)?;
+        assert_eq!(content, "second");
+        Ok(())
+    }
+}

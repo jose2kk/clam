@@ -57,3 +57,77 @@ pub fn create_profile_dir(name: &str) -> Result<()> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // --- Valid names (assert is_ok) ---
+
+    #[test]
+    fn test_accepts_simple_name() {
+        assert!(validate_profile_name("work").is_ok());
+    }
+
+    #[test]
+    fn test_accepts_hyphens_and_underscores() {
+        assert!(validate_profile_name("my-work_profile").is_ok());
+    }
+
+    #[test]
+    fn test_accepts_mixed_case_and_numbers() {
+        assert!(validate_profile_name("Work123").is_ok());
+    }
+
+    #[test]
+    fn test_accepts_single_char() {
+        assert!(validate_profile_name("a").is_ok());
+    }
+
+    // --- Invalid names (assert is_err) ---
+
+    #[test]
+    fn test_rejects_empty_string() {
+        let err = validate_profile_name("").unwrap_err();
+        assert!(
+            err.to_string().contains("empty"),
+            "Error should mention 'empty', got: {}",
+            err
+        );
+    }
+
+    #[test]
+    fn test_rejects_dot() {
+        assert!(validate_profile_name(".").is_err());
+    }
+
+    #[test]
+    fn test_rejects_dotdot() {
+        assert!(validate_profile_name("..").is_err());
+    }
+
+    #[test]
+    fn test_rejects_path_traversal() {
+        assert!(validate_profile_name("../evil").is_err());
+    }
+
+    #[test]
+    fn test_rejects_spaces() {
+        assert!(validate_profile_name("my profile").is_err());
+    }
+
+    #[test]
+    fn test_rejects_slashes() {
+        assert!(validate_profile_name("a/b").is_err());
+    }
+
+    #[test]
+    fn test_rejects_special_chars() {
+        assert!(validate_profile_name("name@host").is_err());
+    }
+
+    #[test]
+    fn test_rejects_backslash() {
+        assert!(validate_profile_name("a\\b").is_err());
+    }
+}
