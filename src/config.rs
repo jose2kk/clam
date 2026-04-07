@@ -107,4 +107,15 @@ mod tests {
         std::env::remove_var("CLMUX_HOME");
         Ok(())
     }
+
+    #[test]
+    fn test_load_malformed_toml_returns_error() -> anyhow::Result<()> {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let tmp = tempfile::tempdir()?;
+        std::env::set_var("CLMUX_HOME", tmp.path());
+        std::fs::write(tmp.path().join("config.toml"), "not valid toml @@##")?;
+        assert!(load().is_err());
+        std::env::remove_var("CLMUX_HOME");
+        Ok(())
+    }
 }
