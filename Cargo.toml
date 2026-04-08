@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.81"
 description = "Manage multiple Claude Code profiles"
+license = "MIT OR Apache-2.0"
 
 [dependencies]
 clap = { version = "4.6", features = ["derive"] }
