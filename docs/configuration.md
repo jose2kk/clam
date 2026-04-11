@@ -1,3 +1,7 @@
+---
+description: Configure clam with environment variables, file layout, profile directories, and config inheritance for Claude Code.
+---
+
 # Configuration
 
 ## Environment Variables

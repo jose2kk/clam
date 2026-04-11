@@ -1,3 +1,7 @@
+---
+description: Full reference for every clam command — add, list, use, remove, run, env, status, current, and completions.
+---
+
 # Commands
 
 ## `clam add`

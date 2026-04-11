@@ -1,3 +1,7 @@
+---
+description: clam lets you manage multiple Claude Code accounts on a single machine with isolated profiles for auth, config, and session data.
+---
+
 # clam
 
 **Manage multiple Claude Code accounts on a single machine.**

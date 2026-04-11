@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://clam.jose2kk.com/sitemap.xml

@@ -1,3 +1,7 @@
+---
+description: Set up clam shell integration with eval, scripting patterns, JSON output, and tab completions for bash, zsh, and fish.
+---
+
 # Shell Integration
 
 ## Setting Up Your Shell

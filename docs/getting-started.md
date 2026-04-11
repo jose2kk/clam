@@ -1,3 +1,7 @@
+---
+description: Install clam, create your first Claude Code profile, and learn how to switch between multiple accounts.
+---
+
 # Getting Started
 
 ## Installation

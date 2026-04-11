@@ -1,11 +1,23 @@
 site_name: clam
 site_url: https://clam.jose2kk.com
 site_description: Manage multiple Claude Code accounts on a single machine
+site_author: Jose Andres Morales
 repo_url: https://github.com/jose2kk/clam
 repo_name: jose2kk/clam
 
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jose2kk/clam
+
+plugins:
+  - search
+  - social
+  - meta
+
 theme:
   name: material
+  custom_dir: overrides
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
