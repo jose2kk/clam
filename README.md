@@ -17,7 +17,7 @@ cargo install --path .
 Or build from source:
 
 ```sh
-git clone https://github.com/tepuii-tech/clam.git
+git clone https://github.com/jose2kk/clam.git
 cd clam
 cargo build --release
 # Binary at target/release/clam

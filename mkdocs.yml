@@ -1,8 +1,8 @@
 site_name: clam
 site_url: https://clam.jose2kk.com
 site_description: Manage multiple Claude Code accounts on a single machine
-repo_url: https://github.com/Tepuii-Tech/clam
-repo_name: Tepuii-Tech/clam
+repo_url: https://github.com/jose2kk/clam
+repo_name: jose2kk/clam
 
 theme:
   name: material
