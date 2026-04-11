@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "uv pip install -r requirements-docs.txt --system",
-  "buildCommand": "python3 -m mkdocs build",
+  "buildCommand": "uv run mkdocs build",
   "outputDirectory": "site"
 }
