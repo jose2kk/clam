@@ -2,15 +2,15 @@ use std::path::PathBuf;
 
 use anyhow::{Context, Result};
 
-/// Returns the base directory for clmux data.
+/// Returns the base directory for clam data.
 ///
-/// Uses `CLMUX_HOME` env var if set, otherwise `~/.clmux/`.
+/// Uses `CLAM_HOME` env var if set, otherwise `~/.clam/`.
 pub fn base_dir() -> Result<PathBuf> {
-    if let Ok(home) = std::env::var("CLMUX_HOME") {
+    if let Ok(home) = std::env::var("CLAM_HOME") {
         return Ok(PathBuf::from(home));
     }
     let home = dirs::home_dir().context("Could not determine home directory")?;
-    Ok(home.join(".clmux"))
+    Ok(home.join(".clam"))
 }
 
 /// Returns the path to config.toml (profile registry).
@@ -62,27 +62,27 @@ mod tests {
     // --- base_dir() tests (TEST-04) ---
 
     #[test]
-    fn test_base_dir_respects_clmux_home() -> anyhow::Result<()> {
+    fn test_base_dir_respects_clam_home() -> anyhow::Result<()> {
         let _guard = ENV_LOCK.lock().unwrap();
         let tmp = tempfile::tempdir()?;
-        std::env::set_var("CLMUX_HOME", tmp.path());
+        std::env::set_var("CLAM_HOME", tmp.path());
 
         let result = base_dir()?;
         assert_eq!(result, tmp.path());
 
-        std::env::remove_var("CLMUX_HOME");
+        std::env::remove_var("CLAM_HOME");
         Ok(())
     }
 
     #[test]
-    fn test_base_dir_defaults_to_home_clmux() -> anyhow::Result<()> {
+    fn test_base_dir_defaults_to_home_clam() -> anyhow::Result<()> {
         let _guard = ENV_LOCK.lock().unwrap();
-        std::env::remove_var("CLMUX_HOME");
+        std::env::remove_var("CLAM_HOME");
 
         let result = base_dir()?;
         assert!(
-            result.ends_with(".clmux"),
-            "Expected path ending with .clmux, got: {}",
+            result.ends_with(".clam"),
+            "Expected path ending with .clam, got: {}",
             result.display()
         );
 
@@ -95,12 +95,12 @@ mod tests {
     fn test_profile_dir_appends_name() -> anyhow::Result<()> {
         let _guard = ENV_LOCK.lock().unwrap();
         let tmp = tempfile::tempdir()?;
-        std::env::set_var("CLMUX_HOME", tmp.path());
+        std::env::set_var("CLAM_HOME", tmp.path());
 
         let result = profile_dir("work")?;
         assert_eq!(result, tmp.path().join("profiles").join("work"));
 
-        std::env::remove_var("CLMUX_HOME");
+        std::env::remove_var("CLAM_HOME");
         Ok(())
     }
 

@@ -11,5 +11,5 @@ pub fn execute(shell: &Shell) {
         Shell::Zsh => ClapShell::Zsh,
         Shell::Fish => ClapShell::Fish,
     };
-    generate(clap_shell, &mut cmd, "clmux", &mut io::stdout());
+    generate(clap_shell, &mut cmd, "clam", &mut io::stdout());
 }

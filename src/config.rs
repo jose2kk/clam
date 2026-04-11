@@ -83,10 +83,10 @@ mod tests {
     fn test_load_missing_file_returns_default() -> anyhow::Result<()> {
         let _guard = ENV_LOCK.lock().unwrap();
         let tmp = tempfile::tempdir()?;
-        std::env::set_var("CLMUX_HOME", tmp.path());
+        std::env::set_var("CLAM_HOME", tmp.path());
         let config = load()?;
         assert!(config.profiles.is_empty());
-        std::env::remove_var("CLMUX_HOME");
+        std::env::remove_var("CLAM_HOME");
         Ok(())
     }
 
@@ -94,7 +94,7 @@ mod tests {
     fn test_save_and_load_round_trip() -> anyhow::Result<()> {
         let _guard = ENV_LOCK.lock().unwrap();
         let tmp = tempfile::tempdir()?;
-        std::env::set_var("CLMUX_HOME", tmp.path());
+        std::env::set_var("CLAM_HOME", tmp.path());
         let config = Config {
             profiles: vec![ProfileEntry {
                 name: "roundtrip".into(),
@@ -104,7 +104,7 @@ mod tests {
         let loaded = load()?;
         assert_eq!(loaded.profiles.len(), 1);
         assert_eq!(loaded.profiles[0].name, "roundtrip");
-        std::env::remove_var("CLMUX_HOME");
+        std::env::remove_var("CLAM_HOME");
         Ok(())
     }
 
@@ -112,10 +112,10 @@ mod tests {
     fn test_load_malformed_toml_returns_error() -> anyhow::Result<()> {
         let _guard = ENV_LOCK.lock().unwrap();
         let tmp = tempfile::tempdir()?;
-        std::env::set_var("CLMUX_HOME", tmp.path());
+        std::env::set_var("CLAM_HOME", tmp.path());
         std::fs::write(tmp.path().join("config.toml"), "not valid toml @@##")?;
         assert!(load().is_err());
-        std::env::remove_var("CLMUX_HOME");
+        std::env::remove_var("CLAM_HOME");
         Ok(())
     }
 }

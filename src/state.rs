@@ -63,10 +63,10 @@ mod tests {
     fn test_load_missing_file_returns_default() -> anyhow::Result<()> {
         let _guard = ENV_LOCK.lock().unwrap();
         let tmp = tempfile::tempdir()?;
-        std::env::set_var("CLMUX_HOME", tmp.path());
+        std::env::set_var("CLAM_HOME", tmp.path());
         let state = load()?;
         assert!(state.active.is_none());
-        std::env::remove_var("CLMUX_HOME");
+        std::env::remove_var("CLAM_HOME");
         Ok(())
     }
 
@@ -74,14 +74,14 @@ mod tests {
     fn test_save_and_load_round_trip() -> anyhow::Result<()> {
         let _guard = ENV_LOCK.lock().unwrap();
         let tmp = tempfile::tempdir()?;
-        std::env::set_var("CLMUX_HOME", tmp.path());
+        std::env::set_var("CLAM_HOME", tmp.path());
         let state = State {
             active: Some("roundtrip".into()),
         };
         save(&state)?;
         let loaded = load()?;
         assert_eq!(loaded.active, Some("roundtrip".into()));
-        std::env::remove_var("CLMUX_HOME");
+        std::env::remove_var("CLAM_HOME");
         Ok(())
     }
 
@@ -89,12 +89,12 @@ mod tests {
     fn test_save_none_and_load_round_trip() -> anyhow::Result<()> {
         let _guard = ENV_LOCK.lock().unwrap();
         let tmp = tempfile::tempdir()?;
-        std::env::set_var("CLMUX_HOME", tmp.path());
+        std::env::set_var("CLAM_HOME", tmp.path());
         let state = State { active: None };
         save(&state)?;
         let loaded = load()?;
         assert!(loaded.active.is_none());
-        std::env::remove_var("CLMUX_HOME");
+        std::env::remove_var("CLAM_HOME");
         Ok(())
     }
 }

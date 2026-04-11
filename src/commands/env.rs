@@ -7,7 +7,7 @@ pub fn execute(json: bool) -> Result<()> {
     if json {
         let output = json!({
             "CLAUDE_CONFIG_DIR": dir.display().to_string(),
-            "CLMUX_PROFILE": name,
+            "CLAM_PROFILE": name,
         });
         println!("{}", serde_json::to_string_pretty(&output)?);
         return Ok(());
@@ -22,7 +22,7 @@ pub fn execute(json: bool) -> Result<()> {
 
     // Export profile-scoped environment
     println!("export CLAUDE_CONFIG_DIR=\"{}\";", dir.display());
-    println!("export CLMUX_PROFILE=\"{name}\";");
+    println!("export CLAM_PROFILE=\"{name}\";");
 
     Ok(())
 }

@@ -9,7 +9,7 @@ pub fn execute(name: &str) -> Result<()> {
     // 2. Check profile exists in registry
     let cfg = config::load()?;
     if !cfg.profiles.iter().any(|p| p.name == name) {
-        anyhow::bail!("Profile '{name}' not found. Run `clmux list` to see available profiles.");
+        anyhow::bail!("Profile '{name}' not found. Run `clam list` to see available profiles.");
     }
 
     // 3. Update state atomically (DATA-01)

@@ -16,14 +16,14 @@ pub(crate) fn resolve_profile(
         profile::validate_profile_name(name)?;
         let cfg = config::load()?;
         if !cfg.profiles.iter().any(|p| p.name == name) {
-            bail!("Profile '{name}' not found. Run `clmux list` to see available profiles.");
+            bail!("Profile '{name}' not found. Run `clam list` to see available profiles.");
         }
         name.to_string()
     } else {
         let st = state::load()?;
         match st.active {
             Some(name) => name,
-            None => bail!("No active profile. Run `clmux add <name>` to create one."),
+            None => bail!("No active profile. Run `clam add <name>` to create one."),
         }
     };
 
@@ -34,13 +34,13 @@ pub(crate) fn resolve_profile(
 /// Execute a command with profile-scoped environment.
 ///
 /// Sanitizes CLAUDE_* and ANTHROPIC_* env vars, sets `CLAUDE_CONFIG_DIR` to the
-/// profile directory, and exec()s into the target binary (replacing the clmux process).
+/// profile directory, and exec()s into the target binary (replacing the clam process).
 pub fn execute(profile_override: Option<&str>, args: &[String]) -> Result<()> {
     let (name, dir) = resolve_profile(profile_override)?;
 
     if !dir.is_dir() {
         bail!(
-            "Profile directory for '{}' is missing at {}. Run `clmux add {}` to recreate it.",
+            "Profile directory for '{}' is missing at {}. Run `clam add {}` to recreate it.",
             name,
             dir.display(),
             name
@@ -65,7 +65,7 @@ pub fn execute(profile_override: Option<&str>, args: &[String]) -> Result<()> {
 
     // Set profile-scoped environment
     cmd.env("CLAUDE_CONFIG_DIR", &dir);
-    cmd.env("CLMUX_PROFILE", &name);
+    cmd.env("CLAM_PROFILE", &name);
 
     // exec() replaces the current process -- only returns on error
     let err = cmd.exec();

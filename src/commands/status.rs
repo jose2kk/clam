@@ -9,7 +9,7 @@ pub fn execute(json: bool) -> Result<()> {
     let st = state::load()?;
 
     let Some(active) = st.active else {
-        eprintln!("No active profile. Run `clmux add <name>` to create one.");
+        eprintln!("No active profile. Run `clam add <name>` to create one.");
         std::process::exit(1);
     };
 

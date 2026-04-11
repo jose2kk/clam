@@ -8,7 +8,7 @@ pub enum Shell {
 }
 
 #[derive(Parser)]
-#[command(name = "clmux", about = "Manage Claude Code profiles")]
+#[command(name = "clam", about = "Manage Claude Code profiles")]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,

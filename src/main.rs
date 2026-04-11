@@ -35,7 +35,7 @@ fn run() -> anyhow::Result<()> {
 
 #[cfg(test)]
 mod test_utils {
-    /// Shared mutex for tests that modify `CLMUX_HOME` env var.
+    /// Shared mutex for tests that modify `CLAM_HOME` env var.
     /// All modules must use this single lock to prevent cross-module races.
     pub static ENV_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
 }

@@ -28,7 +28,7 @@ pub fn validate_profile_name(name: &str) -> Result<()> {
 
 /// Create a profile directory with 0700 permissions.
 ///
-/// The profile directory is opaque -- clmux never inspects its contents (DATA-04).
+/// The profile directory is opaque -- clam never inspects its contents (DATA-04).
 pub fn create_profile_dir(name: &str) -> Result<()> {
     use std::os::unix::fs::DirBuilderExt;
 

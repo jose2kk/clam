@@ -3,9 +3,9 @@ use assert_fs::TempDir;
 use predicates::prelude::*;
 use std::os::unix::fs::PermissionsExt;
 
-fn clmux(home: &TempDir) -> Command {
-    let mut cmd = Command::cargo_bin("clmux").unwrap();
-    cmd.env("CLMUX_HOME", home.path());
+fn clam(home: &TempDir) -> Command {
+    let mut cmd = Command::cargo_bin("clam").unwrap();
+    cmd.env("CLAM_HOME", home.path());
     cmd
 }
 
@@ -13,7 +13,7 @@ fn clmux(home: &TempDir) -> Command {
 fn add_creates_profile_dir_and_config() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["add", "work"])
         .assert()
         .success()
@@ -40,7 +40,7 @@ fn add_creates_profile_dir_and_config() {
 fn add_first_profile_auto_activates() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["add", "work"])
         .assert()
         .success()
@@ -59,10 +59,10 @@ fn add_second_profile_does_not_auto_activate() {
     let home = TempDir::new().unwrap();
 
     // Add first profile (auto-activates)
-    clmux(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
 
     // Add second profile (should NOT change active)
-    clmux(&home)
+    clam(&home)
         .args(["add", "personal"])
         .assert()
         .success()
@@ -83,7 +83,7 @@ fn add_second_profile_does_not_auto_activate() {
 fn add_rejects_path_traversal() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["add", "../evil"])
         .assert()
         .failure()
@@ -95,10 +95,10 @@ fn add_rejects_duplicate() {
     let home = TempDir::new().unwrap();
 
     // Add first time
-    clmux(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
 
     // Add again -- should fail
-    clmux(&home)
+    clam(&home)
         .args(["add", "work"])
         .assert()
         .failure()
@@ -109,7 +109,7 @@ fn add_rejects_duplicate() {
 fn add_rejects_empty_name() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["add", ""])
         .assert()
         .failure()
@@ -120,7 +120,7 @@ fn add_rejects_empty_name() {
 fn add_rejects_dot_name() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["add", "."])
         .assert()
         .failure()
@@ -131,7 +131,7 @@ fn add_rejects_dot_name() {
 fn add_rejects_dotdot_name() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["add", ".."])
         .assert()
         .failure()
@@ -142,7 +142,7 @@ fn add_rejects_dotdot_name() {
 fn add_rejects_name_with_spaces() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["add", "my profile"])
         .assert()
         .failure()
@@ -153,7 +153,7 @@ fn add_rejects_name_with_spaces() {
 fn add_accepts_hyphens_and_underscores() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["add", "my-work_profile"])
         .assert()
         .success();
@@ -172,10 +172,10 @@ fn test_list_shows_active_marker() {
     let home = TempDir::new().unwrap();
 
     // Add two profiles (first auto-activates)
-    clmux(&home).args(["add", "work"]).assert().success();
-    clmux(&home).args(["add", "personal"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "personal"]).assert().success();
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .args(["list"])
         .assert()
         .success()
@@ -198,7 +198,7 @@ fn test_list_shows_active_marker() {
 fn test_list_empty() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["list"])
         .assert()
         .success()
@@ -209,10 +209,10 @@ fn test_list_empty() {
 fn test_list_no_ansi_when_piped() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
 
     // assert_cmd runs without a TTY, so output should have no ANSI codes
-    let output = clmux(&home)
+    let output = clam(&home)
         .args(["list"])
         .assert()
         .success()
@@ -234,9 +234,9 @@ fn test_list_no_ansi_when_piped() {
 fn test_current_prints_active() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
 
-    clmux(&home)
+    clam(&home)
         .args(["current"])
         .assert()
         .success()
@@ -247,7 +247,7 @@ fn test_current_prints_active() {
 fn test_current_no_active_exits_1() {
     let home = TempDir::new().unwrap();
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .args(["current"])
         .assert()
         .code(1)
@@ -267,9 +267,9 @@ fn test_current_no_active_exits_1() {
 fn test_status_shows_active_profile() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .args(["status"])
         .assert()
         .success()
@@ -300,7 +300,7 @@ fn test_status_shows_active_profile() {
 fn test_status_no_active_exits_1() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["status"])
         .assert()
         .code(1)
@@ -311,13 +311,13 @@ fn test_status_no_active_exits_1() {
 fn test_status_missing_dir() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
 
     // Delete the profile directory to simulate missing state
     let profile_dir = home.path().join("profiles").join("work");
     std::fs::remove_dir_all(&profile_dir).unwrap();
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .args(["status"])
         .assert()
         .success()
@@ -339,11 +339,11 @@ fn use_switches_active_profile() {
     let home = TempDir::new().unwrap();
 
     // Add two profiles (first auto-activates)
-    clmux(&home).args(["add", "work"]).assert().success();
-    clmux(&home).args(["add", "personal"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "personal"]).assert().success();
 
     // Switch to personal
-    clmux(&home)
+    clam(&home)
         .args(["use", "personal"])
         .assert()
         .success()
@@ -361,26 +361,26 @@ fn use_switches_active_profile() {
 fn use_nonexistent_profile_fails() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["use", "nonexistent"])
         .assert()
         .failure()
         .stderr(predicate::str::contains("not found"))
-        .stderr(predicate::str::contains("clmux list"));
+        .stderr(predicate::str::contains("clam list"));
 }
 
 #[test]
 fn use_switches_between_profiles() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home).args(["add", "work"]).assert().success();
-    clmux(&home).args(["add", "personal"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "personal"]).assert().success();
 
     // Switch to personal
-    clmux(&home).args(["use", "personal"]).assert().success();
+    clam(&home).args(["use", "personal"]).assert().success();
 
     // Switch back to work
-    clmux(&home).args(["use", "work"]).assert().success();
+    clam(&home).args(["use", "work"]).assert().success();
 
     // Verify state.toml has work
     let state_content = std::fs::read_to_string(home.path().join("state.toml")).unwrap();
@@ -394,7 +394,7 @@ fn use_switches_between_profiles() {
 fn use_invalid_name_fails() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["use", "../evil"])
         .assert()
         .failure()
@@ -408,14 +408,14 @@ fn remove_with_force_deletes_profile() {
     let home = TempDir::new().unwrap();
 
     // Add two profiles (first auto-activates to "work")
-    clmux(&home).args(["add", "work"]).assert().success();
-    clmux(&home).args(["add", "personal"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "personal"]).assert().success();
 
     // Switch to work so personal is not active
-    clmux(&home).args(["use", "work"]).assert().success();
+    clam(&home).args(["use", "work"]).assert().success();
 
     // Remove personal with --force
-    clmux(&home)
+    clam(&home)
         .args(["remove", "personal", "--force"])
         .assert()
         .success()
@@ -440,22 +440,22 @@ fn remove_active_profile_refused() {
     let home = TempDir::new().unwrap();
 
     // Add profile (auto-activates)
-    clmux(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
 
     // Try to remove active profile
-    clmux(&home)
+    clam(&home)
         .args(["remove", "work", "--force"])
         .assert()
         .failure()
         .stderr(predicate::str::contains("Cannot remove active profile"))
-        .stderr(predicate::str::contains("clmux use"));
+        .stderr(predicate::str::contains("clam use"));
 }
 
 #[test]
 fn remove_nonexistent_profile_fails() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["remove", "nonexistent", "--force"])
         .assert()
         .failure()
@@ -467,11 +467,11 @@ fn remove_no_force_non_tty_fails() {
     let home = TempDir::new().unwrap();
 
     // Add two profiles, switch so "personal" is not active
-    clmux(&home).args(["add", "work"]).assert().success();
-    clmux(&home).args(["add", "personal"]).assert().success();
+    clam(&home).args(["add", "work"]).assert().success();
+    clam(&home).args(["add", "personal"]).assert().success();
 
     // Remove without --force (test runner has non-TTY stdin)
-    clmux(&home)
+    clam(&home)
         .args(["remove", "personal"])
         .assert()
         .failure()
@@ -484,14 +484,14 @@ fn remove_last_non_active_profile_allowed() {
     let home = TempDir::new().unwrap();
 
     // Add two profiles
-    clmux(&home).args(["add", "a"]).assert().success();
-    clmux(&home).args(["add", "b"]).assert().success();
+    clam(&home).args(["add", "a"]).assert().success();
+    clam(&home).args(["add", "b"]).assert().success();
 
     // Activate "b"
-    clmux(&home).args(["use", "b"]).assert().success();
+    clam(&home).args(["use", "b"]).assert().success();
 
     // Remove "a" (the only non-active profile)
-    clmux(&home)
+    clam(&home)
         .args(["remove", "a", "--force"])
         .assert()
         .success();
@@ -515,27 +515,27 @@ fn test_full_lifecycle() {
     let home = TempDir::new().unwrap();
 
     // Start with nothing
-    clmux(&home).arg("list").assert().success().stdout("");
-    clmux(&home).arg("current").assert().code(1).stdout("");
+    clam(&home).arg("list").assert().success().stdout("");
+    clam(&home).arg("current").assert().code(1).stdout("");
 
     // Add first profile -- auto-activates (D-04)
-    clmux(&home).args(["add", "work"]).assert().success();
-    clmux(&home)
+    clam(&home).args(["add", "work"]).assert().success();
+    clam(&home)
         .arg("current")
         .assert()
         .success()
         .stdout("work\n");
 
     // Add second profile -- does NOT auto-activate (D-04)
-    clmux(&home).args(["add", "personal"]).assert().success();
-    clmux(&home)
+    clam(&home).args(["add", "personal"]).assert().success();
+    clam(&home)
         .arg("current")
         .assert()
         .success()
         .stdout("work\n");
 
     // List shows both, work is active (D-01)
-    clmux(&home)
+    clam(&home)
         .arg("list")
         .assert()
         .success()
@@ -543,15 +543,15 @@ fn test_full_lifecycle() {
         .stdout(predicate::str::contains("  personal"));
 
     // Switch to personal
-    clmux(&home).args(["use", "personal"]).assert().success();
-    clmux(&home)
+    clam(&home).args(["use", "personal"]).assert().success();
+    clam(&home)
         .arg("current")
         .assert()
         .success()
         .stdout("personal\n");
 
     // Status shows personal info (D-02)
-    clmux(&home)
+    clam(&home)
         .arg("status")
         .assert()
         .success()
@@ -559,13 +559,13 @@ fn test_full_lifecycle() {
         .stdout(predicate::str::contains("Status:"));
 
     // Remove work (not active, use --force for non-TTY)
-    clmux(&home)
+    clam(&home)
         .args(["remove", "work", "--force"])
         .assert()
         .success();
 
     // Verify work is gone
-    clmux(&home)
+    clam(&home)
         .arg("list")
         .assert()
         .success()
@@ -573,7 +573,7 @@ fn test_full_lifecycle() {
         .stdout(predicate::str::contains("work").not());
 
     // Cannot remove active profile (D-07)
-    clmux(&home)
+    clam(&home)
         .args(["remove", "personal", "--force"])
         .assert()
         .failure()
@@ -584,35 +584,35 @@ fn test_full_lifecycle() {
 fn test_error_messages_are_actionable() {
     let home = TempDir::new().unwrap();
 
-    // Use nonexistent profile -> suggests clmux list
-    clmux(&home)
+    // Use nonexistent profile -> suggests clam list
+    clam(&home)
         .args(["use", "ghost"])
         .assert()
         .failure()
-        .stderr(predicate::str::contains("clmux list"));
+        .stderr(predicate::str::contains("clam list"));
 
-    // Remove nonexistent profile -> suggests clmux list
-    clmux(&home)
+    // Remove nonexistent profile -> suggests clam list
+    clam(&home)
         .args(["remove", "ghost", "--force"])
         .assert()
         .failure()
-        .stderr(predicate::str::contains("clmux list"));
+        .stderr(predicate::str::contains("clam list"));
 
-    // Remove active profile -> suggests clmux use
-    clmux(&home).args(["add", "work"]).assert().success();
-    clmux(&home)
+    // Remove active profile -> suggests clam use
+    clam(&home).args(["add", "work"]).assert().success();
+    clam(&home)
         .args(["remove", "work", "--force"])
         .assert()
         .failure()
-        .stderr(predicate::str::contains("clmux use"));
+        .stderr(predicate::str::contains("clam use"));
 
-    // Status with no profile -> suggests clmux add
+    // Status with no profile -> suggests clam add
     let home2 = TempDir::new().unwrap();
-    clmux(&home2)
+    clam(&home2)
         .arg("status")
         .assert()
         .failure()
-        .stderr(predicate::str::contains("clmux add"));
+        .stderr(predicate::str::contains("clam add"));
 }
 
 #[test]
@@ -620,24 +620,24 @@ fn test_name_validation_edge_cases() {
     let home = TempDir::new().unwrap();
 
     // Path traversal attempts
-    clmux(&home).args(["add", "../evil"]).assert().failure();
-    clmux(&home)
+    clam(&home).args(["add", "../evil"]).assert().failure();
+    clam(&home)
         .args(["add", "../../etc/passwd"])
         .assert()
         .failure();
-    clmux(&home).args(["add", "."]).assert().failure();
-    clmux(&home).args(["add", ".."]).assert().failure();
+    clam(&home).args(["add", "."]).assert().failure();
+    clam(&home).args(["add", ".."]).assert().failure();
 
     // Invalid characters
-    clmux(&home).args(["add", "has space"]).assert().failure();
-    clmux(&home).args(["add", "has/slash"]).assert().failure();
-    clmux(&home).args(["add", ""]).assert().failure();
+    clam(&home).args(["add", "has space"]).assert().failure();
+    clam(&home).args(["add", "has/slash"]).assert().failure();
+    clam(&home).args(["add", ""]).assert().failure();
 
     // Valid names
-    clmux(&home).args(["add", "valid-name"]).assert().success();
-    clmux(&home).args(["add", "valid_name"]).assert().success();
-    clmux(&home).args(["add", "CamelCase"]).assert().success();
-    clmux(&home).args(["add", "name123"]).assert().success();
+    clam(&home).args(["add", "valid-name"]).assert().success();
+    clam(&home).args(["add", "valid_name"]).assert().success();
+    clam(&home).args(["add", "CamelCase"]).assert().success();
+    clam(&home).args(["add", "name123"]).assert().success();
 }
 
 #[test]
@@ -645,30 +645,30 @@ fn test_exit_codes() {
     let home = TempDir::new().unwrap();
 
     // Success cases: exit 0
-    clmux(&home).args(["add", "work"]).assert().code(0);
-    clmux(&home).arg("list").assert().code(0);
-    clmux(&home).arg("current").assert().code(0);
-    clmux(&home).arg("status").assert().code(0);
-    clmux(&home).args(["use", "work"]).assert().code(0);
+    clam(&home).args(["add", "work"]).assert().code(0);
+    clam(&home).arg("list").assert().code(0);
+    clam(&home).arg("current").assert().code(0);
+    clam(&home).arg("status").assert().code(0);
+    clam(&home).args(["use", "work"]).assert().code(0);
 
     // Error cases: exit 1
-    clmux(&home).args(["use", "nonexistent"]).assert().code(1);
-    clmux(&home).args(["add", "../evil"]).assert().code(1);
-    clmux(&home)
+    clam(&home).args(["use", "nonexistent"]).assert().code(1);
+    clam(&home).args(["add", "../evil"]).assert().code(1);
+    clam(&home)
         .args(["remove", "work", "--force"])
         .assert()
         .code(1); // active profile
 
     // Special: current with no active = exit 1
     let home2 = TempDir::new().unwrap();
-    clmux(&home2).arg("current").assert().code(1);
+    clam(&home2).arg("current").assert().code(1);
 }
 
 #[cfg(unix)]
 #[test]
 fn test_profile_dir_permissions() {
     let home = TempDir::new().unwrap();
-    clmux(&home).args(["add", "secure"]).assert().success();
+    clam(&home).args(["add", "secure"]).assert().success();
     let metadata = std::fs::metadata(home.path().join("profiles/secure")).unwrap();
     let mode = metadata.permissions().mode() & 0o777;
     assert_eq!(
@@ -688,7 +688,7 @@ fn create_mock_script(bin_dir: &std::path::Path, name: &str, body: &str) -> std:
 
 /// Helper: add a profile and return its directory path
 fn setup_profile(home: &TempDir, name: &str) -> std::path::PathBuf {
-    clmux(home).args(["add", name]).assert().success();
+    clam(home).args(["add", name]).assert().success();
     home.path().join("profiles").join(name)
 }
 
@@ -705,7 +705,7 @@ fn test_run_passes_claude_config_dir() {
         "echo \"CLAUDE_CONFIG_DIR=$CLAUDE_CONFIG_DIR\"",
     );
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .args(["run", "--", mock.to_str().unwrap()])
         .assert()
         .success()
@@ -733,7 +733,7 @@ fn test_run_strips_claude_env_vars() {
 
     let mock = create_mock_script(bin_dir.path(), "mock-cmd", "env");
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .env("CLAUDE_SOMETHING", "leak")
         .env("ANTHROPIC_KEY", "secret")
         .args(["run", "--", mock.to_str().unwrap()])
@@ -764,7 +764,7 @@ fn test_run_with_profile_flag() {
     let bin_dir = TempDir::new().unwrap();
 
     setup_profile(&home, "work");
-    clmux(&home).args(["add", "personal"]).assert().success();
+    clam(&home).args(["add", "personal"]).assert().success();
 
     let mock = create_mock_script(
         bin_dir.path(),
@@ -772,7 +772,7 @@ fn test_run_with_profile_flag() {
         "echo \"CLAUDE_CONFIG_DIR=$CLAUDE_CONFIG_DIR\"",
     );
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .args(["run", "--profile", "personal", "--", mock.to_str().unwrap()])
         .assert()
         .success()
@@ -804,12 +804,12 @@ fn test_run_nonexistent_profile_fails() {
 
     setup_profile(&home, "work");
 
-    clmux(&home)
+    clam(&home)
         .args(["run", "--profile", "ghost", "--", "echo", "hi"])
         .assert()
         .failure()
         .stderr(predicate::str::contains("not found"))
-        .stderr(predicate::str::contains("clmux list"));
+        .stderr(predicate::str::contains("clam list"));
 }
 
 #[test]
@@ -821,7 +821,7 @@ fn test_run_missing_directory_fails() {
     // Delete the profile directory
     std::fs::remove_dir_all(&profile_dir).unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["run", "--", "echo", "hi"])
         .assert()
         .failure()
@@ -832,12 +832,12 @@ fn test_run_missing_directory_fails() {
 fn test_run_no_active_profile_fails() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["run", "--", "echo", "hi"])
         .assert()
         .failure()
         .stderr(predicate::str::contains("No active profile"))
-        .stderr(predicate::str::contains("clmux add"));
+        .stderr(predicate::str::contains("clam add"));
 }
 
 // -- env command tests --
@@ -848,7 +848,7 @@ fn test_env_outputs_valid_export_syntax() {
 
     setup_profile(&home, "work");
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .args(["env"])
         .assert()
         .success()
@@ -873,8 +873,8 @@ fn test_env_outputs_valid_export_syntax() {
         "Should contain export CLAUDE_CONFIG_DIR, got: {stdout}"
     );
     assert!(
-        stdout.contains("export CLMUX_PROFILE=\"work\";"),
-        "Should contain export CLMUX_PROFILE=\"work\", got: {stdout}"
+        stdout.contains("export CLAM_PROFILE=\"work\";"),
+        "Should contain export CLAM_PROFILE=\"work\", got: {stdout}"
     );
 }
 
@@ -884,7 +884,7 @@ fn test_env_includes_unset_for_existing_vars() {
 
     setup_profile(&home, "work");
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .env("CLAUDE_SOMETHING", "test")
         .env("ANTHROPIC_KEY", "test")
         .args(["env"])
@@ -909,7 +909,7 @@ fn test_env_includes_unset_for_existing_vars() {
 fn test_env_no_active_profile_fails() {
     let home = TempDir::new().unwrap();
 
-    clmux(&home)
+    clam(&home)
         .args(["env"])
         .assert()
         .failure()
@@ -924,7 +924,7 @@ fn test_status_shows_config_dir() {
 
     setup_profile(&home, "work");
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .args(["status"])
         .assert()
         .success()
@@ -952,7 +952,7 @@ fn test_status_shows_item_count() {
     // Create a dummy file inside the profile directory
     std::fs::write(profile_dir.join("settings.json"), "{}").unwrap();
 
-    let output = clmux(&home)
+    let output = clam(&home)
         .args(["status"])
         .assert()
         .success()
