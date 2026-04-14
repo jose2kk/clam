@@ -1,5 +1,5 @@
 ---
-description: Full reference for every clam command — add, list, use, remove, run, env, status, current, and completions.
+description: Full reference for every clam command — add, list, use, remove, run, env, status, current, completions, and repair.
 ---
 
 # Commands
@@ -224,3 +224,49 @@ clam completions zsh > ~/.zsh/completions/_clam
 # Fish
 clam completions fish > ~/.config/fish/completions/clam.fish
 ```
+
+---
+
+## `clam repair`
+
+Repair legacy profiles that share session data with the global `~/.claude/`.
+
+```sh
+clam repair [--dry-run] [--profile <name>] [--force]
+```
+
+| Argument | Description |
+|----------|-------------|
+| `--dry-run` | Show the plan without making any changes |
+| `--profile <name>` | Repair only a specific profile (default: all) |
+| `--force` | Skip the confirmation prompt |
+
+Older clam versions symlinked `projects/` and `todos/` inside each profile to the shared `~/.claude/projects/` and `~/.claude/todos/`. Because Claude Code reads session transcripts from `projects/` (for `/resume` and the session picker) and per-session todo state from `todos/`, this caused sessions created in one profile to appear in every other profile.
+
+`clam repair` detects these bad symlinks, converts them into real per-profile directories, and migrates owned session data in.
+
+### How ownership is decided
+
+Each profile's `.claude.json` contains a `projects` map keyed by the absolute working directories Claude Code has opened under that profile. `clam repair` uses this as the source of truth:
+
+- If a working directory is claimed by **exactly one** profile, its session transcripts and matching todo files are moved into that profile.
+- If a working directory is claimed by **multiple** profiles (a conflict), it's left in `~/.claude/` and listed in the plan — resolve it manually.
+- Working directories claimed by **no** profile stay in `~/.claude/` as orphans (safe to leave, used only by direct Claude Code invocations outside clam).
+
+### Recommended workflow
+
+```sh
+# 1. Preview the plan
+clam repair --dry-run
+
+# 2. Back up first (safety net)
+tar czf ~/claude-backup-$(date +%Y%m%d).tgz -C ~ .claude/projects .claude/todos
+
+# 3. Execute
+clam repair
+```
+
+After repair, each profile's `~/.clam/profiles/<name>/projects/` and `todos/` are real directories containing only that profile's session data. `clam run <profile>` will show isolated session history in `/resume`.
+
+!!! note
+    `clam repair` is idempotent and safe to re-run — profiles that are already isolated are skipped with a "Nothing to repair" message.

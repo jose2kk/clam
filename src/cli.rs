@@ -62,4 +62,17 @@ pub enum Commands {
         /// Shell to generate completions for
         shell: Shell,
     },
+    /// Repair profiles that share session data with the global ~/.claude/
+    /// (legacy profiles created before per-profile isolation of projects/todos).
+    Repair {
+        /// Show the plan without making changes
+        #[arg(long)]
+        dry_run: bool,
+        /// Repair only a specific profile
+        #[arg(long)]
+        profile: Option<String>,
+        /// Skip the confirmation prompt
+        #[arg(long)]
+        force: bool,
+    },
 }

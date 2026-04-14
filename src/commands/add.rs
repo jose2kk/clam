@@ -79,6 +79,8 @@ fn inherit_global_config(name: &str) -> Result<()> {
         "debug",
         "plans",
         "backups",
+        "projects",
+        "todos",
     ];
 
     let entries = std::fs::read_dir(&claude_dir)

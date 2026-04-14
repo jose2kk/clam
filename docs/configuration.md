@@ -89,6 +89,11 @@ Everything in `~/.claude/` **except** session-specific items:
 | `debug` | Debug logs |
 | `plans` | Plan data |
 | `backups` | Backup data |
+| `projects` | Session transcripts (read by `/resume` and the session picker) |
+| `todos` | Per-session todo state |
+
+!!! warning "Upgrading from an older clam"
+    clam versions before the addition of per-profile `projects`/`todos` isolation symlinked both into the shared `~/.claude/` directory, causing sessions to leak across profiles. Run `clam repair` (see [Commands](commands.md#clam-repair)) once after upgrading to convert those symlinks into real per-profile directories and migrate owned sessions.
 
 ### How symlinks work
 

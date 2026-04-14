@@ -4,6 +4,7 @@ pub mod current;
 pub mod env;
 pub mod list;
 pub mod remove;
+pub mod repair;
 pub mod run;
 pub mod status;
 pub mod use_cmd;
