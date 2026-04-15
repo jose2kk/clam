@@ -84,7 +84,10 @@ fn run_repair(
     }
 
     for s in &states {
-        let owned = unique_by_profile.get(s.name.as_str()).cloned().unwrap_or_default();
+        let owned = unique_by_profile
+            .get(s.name.as_str())
+            .cloned()
+            .unwrap_or_default();
         repair_profile(s, claude_dir, &owned)?;
     }
 
@@ -120,7 +123,10 @@ fn resolve_ownership(states: &[ProfileState]) -> (UniqueByProfile<'_>, Conflicts
     let mut claims: HashMap<&str, Vec<&str>> = HashMap::new();
     for s in states {
         for cwd in &s.owned_cwds {
-            claims.entry(cwd.as_str()).or_default().push(s.name.as_str());
+            claims
+                .entry(cwd.as_str())
+                .or_default()
+                .push(s.name.as_str());
         }
     }
 
@@ -137,10 +143,8 @@ fn resolve_ownership(states: &[ProfileState]) -> (UniqueByProfile<'_>, Conflicts
         })
         .collect();
 
-    let mut conflicts: Vec<(&str, Vec<&str>)> = claims
-        .into_iter()
-        .filter(|(_, v)| v.len() > 1)
-        .collect();
+    let mut conflicts: Vec<(&str, Vec<&str>)> =
+        claims.into_iter().filter(|(_, v)| v.len() > 1).collect();
     conflicts.sort_by_key(|(k, _)| *k);
     (unique_by_profile, conflicts)
 }
@@ -154,7 +158,10 @@ fn print_plan(
     for s in states {
         let subs = s.bad_subs.join(", ");
         let n = unique_by_profile.get(s.name.as_str()).map_or(0, Vec::len);
-        println!("  {} — bad symlinks: {subs}; {n} owned cwd(s) to migrate", s.name);
+        println!(
+            "  {} — bad symlinks: {subs}; {n} owned cwd(s) to migrate",
+            s.name
+        );
     }
     if !conflicts.is_empty() {
         println!("\nConflicts (claimed by multiple profiles — left in ~/.claude/):");
@@ -186,8 +193,8 @@ fn repair_profile(state: &ProfileState, claude_dir: &Path, owned_cwds: &[&str]) 
             if !src.is_dir() {
                 continue;
             }
-            for entry in fs::read_dir(&src)
-                .with_context(|| format!("Failed to read {}", src.display()))?
+            for entry in
+                fs::read_dir(&src).with_context(|| format!("Failed to read {}", src.display()))?
             {
                 let entry = entry?;
                 let fname = entry.file_name();
@@ -199,8 +206,9 @@ fn repair_profile(state: &ProfileState, claude_dir: &Path, owned_cwds: &[&str]) 
                 }
             }
             let dst = projects_dst.join(&flat);
-            fs::rename(&src, &dst)
-                .with_context(|| format!("Failed to move {} to {}", src.display(), dst.display()))?;
+            fs::rename(&src, &dst).with_context(|| {
+                format!("Failed to move {} to {}", src.display(), dst.display())
+            })?;
         }
     }
 
@@ -243,8 +251,8 @@ fn load_claude_json_projects(path: &Path) -> Result<Vec<String>> {
     if !path.exists() {
         return Ok(Vec::new());
     }
-    let content = fs::read_to_string(path)
-        .with_context(|| format!("Failed to read {}", path.display()))?;
+    let content =
+        fs::read_to_string(path).with_context(|| format!("Failed to read {}", path.display()))?;
     let v: Value = serde_json::from_str(&content)
         .with_context(|| format!("Failed to parse {}", path.display()))?;
     let Some(projects) = v.get("projects").and_then(Value::as_object) else {
@@ -368,7 +376,9 @@ mod tests {
         fs::create_dir_all(&proj)?;
         fs::write(proj.join(format!("{sid}.jsonl")), "{}")?;
         fs::write(
-            claude_dir.join("todos").join(format!("{sid}-agent-{sid}.json")),
+            claude_dir
+                .join("todos")
+                .join(format!("{sid}-agent-{sid}.json")),
             "{}",
         )?;
         Ok(())
@@ -393,12 +403,22 @@ mod tests {
         assert!(!pdir.join("projects").is_symlink());
         // Session moved
         let flat = flatten_cwd(cwd);
-        assert!(pdir.join("projects").join(&flat).join(format!("{sid}.jsonl")).exists());
+        assert!(pdir
+            .join("projects")
+            .join(&flat)
+            .join(format!("{sid}.jsonl"))
+            .exists());
         // Todo moved
-        assert!(pdir.join("todos").join(format!("{sid}-agent-{sid}.json")).exists());
+        assert!(pdir
+            .join("todos")
+            .join(format!("{sid}-agent-{sid}.json"))
+            .exists());
         // Global pool emptied of the moved cwd
         assert!(!claude_dir.join("projects").join(&flat).exists());
-        assert!(!claude_dir.join("todos").join(format!("{sid}-agent-{sid}.json")).exists());
+        assert!(!claude_dir
+            .join("todos")
+            .join(format!("{sid}-agent-{sid}.json"))
+            .exists());
 
         std::env::remove_var("CLAM_HOME");
         Ok(())
@@ -438,13 +458,24 @@ mod tests {
         make_bad_profile(&claude_dir, "a", &[shared])?;
         make_bad_profile(&claude_dir, "b", &[shared])?;
 
-        run_repair(&["a".to_string(), "b".to_string()], &claude_dir, false, true)?;
+        run_repair(
+            &["a".to_string(), "b".to_string()],
+            &claude_dir,
+            false,
+            true,
+        )?;
 
         // Shared cwd's session stays in global pool (unresolved conflict)
         let flat = flatten_cwd(shared);
         assert!(claude_dir.join("projects").join(&flat).is_dir());
-        assert!(!paths::profile_dir("a")?.join("projects").join(&flat).exists());
-        assert!(!paths::profile_dir("b")?.join("projects").join(&flat).exists());
+        assert!(!paths::profile_dir("a")?
+            .join("projects")
+            .join(&flat)
+            .exists());
+        assert!(!paths::profile_dir("b")?
+            .join("projects")
+            .join(&flat)
+            .exists());
 
         std::env::remove_var("CLAM_HOME");
         Ok(())

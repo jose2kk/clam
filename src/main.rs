@@ -30,9 +30,11 @@ fn run() -> anyhow::Result<()> {
             commands::completions::execute(&shell);
             Ok(())
         }
-        cli::Commands::Repair { dry_run, profile, force } => {
-            commands::repair::execute(dry_run, profile.as_deref(), force)
-        }
+        cli::Commands::Repair {
+            dry_run,
+            profile,
+            force,
+        } => commands::repair::execute(dry_run, profile.as_deref(), force),
     }
 }
 
