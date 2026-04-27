@@ -36,12 +36,13 @@ clam add work --inherit
 List all profiles.
 
 ```sh
-clam list [--json]
+clam list [--json] [--names]
 ```
 
 | Argument | Description |
 |----------|-------------|
 | `--json` | Output as JSON array |
+| `--names` | Print only profile names, one per line (for shell scripts) |
 
 Text output marks the active profile with `*`:
 

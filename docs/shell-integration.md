@@ -64,6 +64,16 @@ else
 fi
 ```
 
+### List profile names
+
+For simple iteration in scripts, `--names` prints one name per line:
+
+```sh
+for profile in $(clam list --names); do
+  echo "Profile: $profile"
+done
+```
+
 ### JSON output
 
 Commands with `--json` flags produce structured output for `jq`:
@@ -72,7 +82,7 @@ Commands with `--json` flags produce structured output for `jq`:
 # Get the active profile's directory path
 clam status --json | jq -r '.path'
 
-# List all profile names
+# List all profile names (or use: clam list --names)
 clam list --json | jq -r '.[].name'
 
 # Check which profile is active

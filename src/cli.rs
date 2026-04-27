@@ -27,6 +27,9 @@ pub enum Commands {
     List {
         #[arg(long)]
         json: bool,
+        /// Print only profile names, one per line (for shell scripts)
+        #[arg(long)]
+        names: bool,
     },
     /// Switch active profile
     Use { name: String },

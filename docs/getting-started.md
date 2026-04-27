@@ -6,15 +6,39 @@ description: Install clam, create your first Claude Code profile, and learn how 
 
 ## Installation
 
-### From source (requires Rust)
-
-Install [Rust](https://rustup.rs/) if you don't have it, then:
+### Homebrew (macOS / Linux)
 
 ```sh
-cargo install --path .
+brew install jose2kk/tap/clam
 ```
 
-Or build manually:
+### Shell installer (macOS / Linux)
+
+```sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/jose2kk/clam/releases/latest/download/clam-installer.sh | sh
+```
+
+### PowerShell installer (Windows)
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/jose2kk/clam/releases/latest/download/clam-installer.ps1 | iex"
+```
+
+### Cargo (pre-built binary)
+
+If you have [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall):
+
+```sh
+cargo binstall clam
+```
+
+### Cargo (from source)
+
+```sh
+cargo install clam
+```
+
+### From source (manual build)
 
 ```sh
 git clone https://github.com/jose2kk/clam.git
