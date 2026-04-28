@@ -73,9 +73,9 @@ Releases are automated via [cargo-dist](https://opensource.axo.dev/cargo-dist/).
 
 CI will automatically:
 
-- Build binaries for macOS (x86 + ARM), Linux (glibc + musl), and Windows
+- Build binaries for macOS (x86 + ARM) and Linux (glibc + musl)
 - Create a GitHub Release with all artifacts and checksums
-- Generate the shell and PowerShell installer scripts
+- Generate the shell installer script
 - Publish the Homebrew formula to [jose2kk/homebrew-tap](https://github.com/jose2kk/homebrew-tap)
 - Attach supply chain attestations to the release
 - Publish to [crates.io](https://crates.io/crates/clam-cli)
