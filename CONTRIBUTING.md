@@ -40,7 +40,9 @@ cargo nextest run
 
 ## Releasing (maintainers)
 
-Releases are automated via [cargo-dist](https://opensource.axo.dev/cargo-dist/). When you push a version tag, CI builds binaries for all platforms, creates a GitHub Release, and publishes the Homebrew formula.
+Releases are restricted to codeowners. Only codeowners can create version tags (`v*`), which trigger the release workflow.
+
+Releases are automated via [cargo-dist](https://opensource.axo.dev/cargo-dist/). When a version tag is pushed, CI builds binaries for all platforms, creates a GitHub Release, publishes the Homebrew formula, and publishes to crates.io.
 
 ### Steps
 
@@ -77,11 +79,6 @@ CI will automatically:
 - Publish the Homebrew formula to [jose2kk/homebrew-tap](https://github.com/jose2kk/homebrew-tap)
 - Attach supply chain attestations to the release
 - Publish to [crates.io](https://crates.io/crates/clam-cli)
-
-5. **Publish to crates.io** (separate step, not automated):
-   ```sh
-   cargo publish
-   ```
 
 ### Prerequisites (one-time setup)
 
