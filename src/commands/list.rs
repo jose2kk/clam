@@ -5,8 +5,16 @@ use serde_json::json;
 
 use crate::{config, paths, state};
 
-pub fn execute(json: bool) -> Result<()> {
+pub fn execute(json: bool, names: bool) -> Result<()> {
     let cfg = config::load()?;
+
+    if names {
+        for profile in &cfg.profiles {
+            println!("{}", profile.name);
+        }
+        return Ok(());
+    }
+
     let st = state::load()?;
     let active = st.active.as_deref();
 
