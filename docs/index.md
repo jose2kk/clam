@@ -27,6 +27,35 @@ clam gives each account its own isolated profile directory. Switching between ac
     └── personal/    # Claude Code state for "personal" account
 ```
 
+## Install
+
+=== "Homebrew"
+
+    ```sh
+    brew install jose2kk/tap/clam
+    ```
+
+=== "Shell"
+
+    ```sh
+    curl --proto '=https' --tlsv1.2 -LsSf https://github.com/jose2kk/clam/releases/latest/download/clam-installer.sh | sh
+    ```
+
+=== "PowerShell"
+
+    ```powershell
+    powershell -ExecutionPolicy Bypass -c "irm https://github.com/jose2kk/clam/releases/latest/download/clam-installer.ps1 | iex"
+    ```
+
+=== "Cargo"
+
+    ```sh
+    cargo binstall clam
+    # or: cargo install clam
+    ```
+
+See [Getting Started](getting-started.md) for all installation options.
+
 ## Quick Example
 
 ```sh
@@ -57,3 +86,5 @@ clam run
 - [Commands](commands.md) — full reference for every subcommand
 - [Configuration](configuration.md) — environment variables and file layout
 - [Shell Integration](shell-integration.md) — set up your shell and scripting patterns
+- [Contributing](https://github.com/jose2kk/clam/blob/main/CONTRIBUTING.md) — how to contribute
+- [Changelog](https://github.com/jose2kk/clam/blob/main/CHANGELOG.md) — release history

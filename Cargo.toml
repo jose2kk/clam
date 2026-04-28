@@ -5,6 +5,8 @@ edition = "2021"
 rust-version = "1.81"
 description = "Manage multiple Claude Code profiles"
 license = "MIT OR Apache-2.0"
+repository = "https://github.com/jose2kk/clam"
+homepage = "https://clam.jose2kk.com"
 
 [dependencies]
 clap = { version = "4.6", features = ["derive"] }
@@ -31,3 +33,8 @@ module_name_repetitions = "allow"
 missing_errors_doc = "allow"
 missing_panics_doc = "allow"
 must_use_candidate = "allow"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
