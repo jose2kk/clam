@@ -78,6 +78,11 @@ CI will automatically:
 - Attach supply chain attestations to the release
 - Publish to [crates.io](https://crates.io/crates/clam-cli)
 
+5. **Publish to crates.io** (separate step, not automated):
+   ```sh
+   cargo publish
+   ```
+
 ### Prerequisites (one-time setup)
 
 Before the first release, you need:
