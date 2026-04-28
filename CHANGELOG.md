@@ -7,13 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- Homebrew, shell, and PowerShell installers via cargo-dist
-- GitHub Attestations for supply chain security
-- musl targets for static Linux binaries
-
-## [0.1.0] - 2025-06-01
+## [0.1.0] - 2026-04-28
 
 ### Added
 
@@ -26,4 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shell completions for bash, zsh, and fish
 - Per-profile isolation of `projects/` and `todos/` directories
 - `clam repair` to fix broken profile state
+- Homebrew, shell, and PowerShell installers via cargo-dist
+- GitHub Attestations for supply chain security
+- musl targets for static Linux binaries
 - CI pipeline: fmt, clippy, deny, test (macOS + Linux), MSRV (1.81), docs, coverage

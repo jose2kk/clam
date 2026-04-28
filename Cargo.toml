@@ -1,5 +1,5 @@
 [package]
-name = "clam"
+name = "clam-cli"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.81"
@@ -7,6 +7,10 @@ description = "Manage multiple Claude Code profiles"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/jose2kk/clam"
 homepage = "https://clam.jose2kk.com"
+
+[[bin]]
+name = "clam"
+path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.6", features = ["derive"] }

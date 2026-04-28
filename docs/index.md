@@ -38,20 +38,20 @@ clam gives each account its own isolated profile directory. Switching between ac
 === "Shell"
 
     ```sh
-    curl --proto '=https' --tlsv1.2 -LsSf https://github.com/jose2kk/clam/releases/latest/download/clam-installer.sh | sh
+    curl --proto '=https' --tlsv1.2 -LsSf https://github.com/jose2kk/clam/releases/latest/download/clam-cli-installer.sh | sh
     ```
 
 === "PowerShell"
 
     ```powershell
-    powershell -ExecutionPolicy Bypass -c "irm https://github.com/jose2kk/clam/releases/latest/download/clam-installer.ps1 | iex"
+    powershell -ExecutionPolicy Bypass -c "irm https://github.com/jose2kk/clam/releases/latest/download/clam-cli-installer.ps1 | iex"
     ```
 
 === "Cargo"
 
     ```sh
-    cargo binstall clam
-    # or: cargo install clam
+    cargo binstall clam-cli
+    # or: cargo install clam-cli
     ```
 
 See [Getting Started](getting-started.md) for all installation options.
