@@ -76,11 +76,7 @@ CI will automatically:
 - Generate the shell and PowerShell installer scripts
 - Publish the Homebrew formula to [jose2kk/homebrew-tap](https://github.com/jose2kk/homebrew-tap)
 - Attach supply chain attestations to the release
-
-5. **Publish to crates.io** (separate step, not automated):
-   ```sh
-   cargo publish
-   ```
+- Publish to [crates.io](https://crates.io/crates/clam-cli)
 
 ### Prerequisites (one-time setup)
 
@@ -89,8 +85,8 @@ Before the first release, you need:
 1. Create the [`jose2kk/homebrew-tap`](https://github.com/jose2kk/homebrew-tap) repo on GitHub (public, with a README)
 2. Create a GitHub fine-grained token with **Contents: Read and write** scoped to `homebrew-tap` only
 3. Add it as the `HOMEBREW_TAP_TOKEN` secret in the clam repo settings (Settings > Secrets and variables > Actions)
-4. Log in to [crates.io](https://crates.io) and create an API token scoped to **publish-update** for `clam-cli`
-5. Run `cargo login` locally with that token (or set `CARGO_REGISTRY_TOKEN`)
+4. Create a [crates.io](https://crates.io) API token scoped to **publish-update** for `clam-cli`
+5. Add it as the `CARGO_REGISTRY_TOKEN` secret in the clam repo settings
 
 ## Code Style
 
