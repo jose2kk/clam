@@ -18,12 +18,6 @@ brew install jose2kk/tap/clam
 curl --proto '=https' --tlsv1.2 -LsSf https://github.com/jose2kk/clam/releases/latest/download/clam-cli-installer.sh | sh
 ```
 
-### PowerShell installer (Windows)
-
-```powershell
-powershell -ExecutionPolicy Bypass -c "irm https://github.com/jose2kk/clam/releases/latest/download/clam-cli-installer.ps1 | iex"
-```
-
 ### Cargo (pre-built binary)
 
 If you have [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall):
