@@ -20,4 +20,4 @@ github-attestations = true
 # Homebrew tap repository
 tap = "jose2kk/homebrew-tap"
 # Publish jobs to run
-publish-jobs = ["homebrew"]
+publish-jobs = ["homebrew", "./publish-crates-io"]
