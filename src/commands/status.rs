@@ -18,9 +18,7 @@ pub fn execute(json: bool) -> Result<()> {
 
     if json {
         let item_count = if dir_exists {
-            std::fs::read_dir(&dir)
-                .map(std::iter::Iterator::count)
-                .unwrap_or(0)
+            std::fs::read_dir(&dir).map_or(0, std::iter::Iterator::count)
         } else {
             0
         };
@@ -59,9 +57,7 @@ pub fn execute(json: bool) -> Result<()> {
     println!("Config:  CLAUDE_CONFIG_DIR={}", dir.display());
 
     if dir_exists {
-        let item_count = std::fs::read_dir(&dir)
-            .map(std::iter::Iterator::count)
-            .unwrap_or(0);
+        let item_count = std::fs::read_dir(&dir).map_or(0, std::iter::Iterator::count);
         println!("Items:   {item_count} file(s)");
     }
 
