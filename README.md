@@ -1,8 +1,8 @@
 # clam
 
 [![CI](https://github.com/jose2kk/clam/actions/workflows/ci.yml/badge.svg)](https://github.com/jose2kk/clam/actions/workflows/ci.yml)
-[![Crates.io](https://img.shields.io/crates/v/clam.svg)](https://crates.io/crates/clam)
-[![License](https://img.shields.io/crates/l/clam.svg)](LICENSE-MIT)
+[![Crates.io](https://img.shields.io/crates/v/clam-cli.svg)](https://crates.io/crates/clam-cli)
+[![License](https://img.shields.io/crates/l/clam-cli.svg)](LICENSE-MIT)
 
 Manage multiple Claude Code accounts on a single machine.
 
@@ -23,20 +23,20 @@ brew install jose2kk/tap/clam
 ### Shell installer (macOS / Linux)
 
 ```sh
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/jose2kk/clam/releases/latest/download/clam-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/jose2kk/clam/releases/latest/download/clam-cli-installer.sh | sh
 ```
 
 ### PowerShell (Windows)
 
 ```powershell
-powershell -ExecutionPolicy Bypass -c "irm https://github.com/jose2kk/clam/releases/latest/download/clam-installer.ps1 | iex"
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/jose2kk/clam/releases/latest/download/clam-cli-installer.ps1 | iex"
 ```
 
 ### Cargo
 
 ```sh
-cargo binstall clam   # pre-built binary (requires cargo-binstall)
-cargo install clam    # compile from source
+cargo binstall clam-cli   # pre-built binary (requires cargo-binstall)
+cargo install clam-cli    # compile from source
 ```
 
 ## Quick Start

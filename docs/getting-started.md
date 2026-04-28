@@ -15,13 +15,13 @@ brew install jose2kk/tap/clam
 ### Shell installer (macOS / Linux)
 
 ```sh
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/jose2kk/clam/releases/latest/download/clam-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/jose2kk/clam/releases/latest/download/clam-cli-installer.sh | sh
 ```
 
 ### PowerShell installer (Windows)
 
 ```powershell
-powershell -ExecutionPolicy Bypass -c "irm https://github.com/jose2kk/clam/releases/latest/download/clam-installer.ps1 | iex"
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/jose2kk/clam/releases/latest/download/clam-cli-installer.ps1 | iex"
 ```
 
 ### Cargo (pre-built binary)
@@ -29,13 +29,13 @@ powershell -ExecutionPolicy Bypass -c "irm https://github.com/jose2kk/clam/relea
 If you have [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall):
 
 ```sh
-cargo binstall clam
+cargo binstall clam-cli
 ```
 
 ### Cargo (from source)
 
 ```sh
-cargo install clam
+cargo install clam-cli
 ```
 
 ### From source (manual build)
