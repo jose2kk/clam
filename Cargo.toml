@@ -7,6 +7,8 @@ description = "Manage multiple Claude Code profiles"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/jose2kk/clam"
 homepage = "https://clam.jose2kk.com"
+keywords = ["cli", "claude-code", "profile", "account", "environment"]
+categories = ["command-line-utilities", "development-tools"]
 
 [[bin]]
 name = "clam"
