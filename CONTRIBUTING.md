@@ -53,32 +53,35 @@ Releases are automated via [cargo-dist](https://opensource.axo.dev/cargo-dist/).
 
 2. **Move the Unreleased changelog entries** to a new version section in `CHANGELOG.md`:
    ```markdown
-   ## [0.2.0] - 2026-04-27
+   ## [0.2.0] - 2026-05-10
 
    ### Added
    - ...
    ```
 
-3. **Commit the version bump**:
+3. **Commit and push to `main`** (via PR or direct push):
    ```sh
    git add Cargo.toml Cargo.lock CHANGELOG.md
    git commit -m "release: v0.2.0"
+   git push origin main
    ```
 
-4. **Tag and push**:
+4. **Create and push the tag** (do NOT create a release from the GitHub UI — the workflow does that):
    ```sh
    git tag v0.2.0
-   git push origin main --tags
+   git push origin v0.2.0
    ```
 
-CI will automatically:
+The tag push triggers the release workflow, which will automatically:
 
 - Build binaries for macOS (x86 + ARM) and Linux (glibc + musl)
-- Create a GitHub Release with all artifacts and checksums
+- Create a GitHub Release with all artifacts, checksums, and install instructions
 - Generate the shell installer script
 - Publish the Homebrew formula to [jose2kk/homebrew-tap](https://github.com/jose2kk/homebrew-tap)
-- Attach supply chain attestations to the release
 - Publish to [crates.io](https://crates.io/crates/clam-cli)
+- Attach supply chain attestations to the release
+
+> **Important:** Do not create the release through the GitHub UI. The cargo-dist workflow creates the release itself. Creating it manually first will cause the workflow to fail with "a release with the same tag name already exists".
 
 ### Prerequisites (one-time setup)
 
