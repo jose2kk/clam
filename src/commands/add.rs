@@ -96,6 +96,17 @@ fn inherit_global_config(name: &str) -> Result<()> {
         }
 
         let target = profile_dir.join(&file_name);
+
+        // CLAUDE.md is per-profile: give the profile its OWN file that imports
+        // the shared global one, instead of a symlink that leaks edits across
+        // profiles. Everything else is still shared via symlink.
+        if name_str.as_ref() == "CLAUDE.md" {
+            if !target.exists() {
+                crate::claude_md::write_overlay(&profile_dir, &claude_dir, name)?;
+            }
+            continue;
+        }
+
         if !target.exists() {
             std::os::unix::fs::symlink(entry.path(), &target)
                 .with_context(|| format!("Failed to symlink {name_str} into profile"))?;

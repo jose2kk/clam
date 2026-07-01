@@ -65,8 +65,9 @@ pub enum Commands {
         /// Shell to generate completions for
         shell: Shell,
     },
-    /// Repair profiles that share session data with the global ~/.claude/
-    /// (legacy profiles created before per-profile isolation of projects/todos).
+    /// Repair profiles that share session data or a global CLAUDE.md with
+    /// ~/.claude/ (legacy profiles created before per-profile isolation of
+    /// projects/todos and CLAUDE.md).
     Repair {
         /// Show the plan without making changes
         #[arg(long)]
