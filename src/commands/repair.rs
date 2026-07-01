@@ -54,15 +54,16 @@ fn run_repair(
     force: bool,
 ) -> Result<()> {
     let states = scan_profiles(profile_names, claude_dir)?;
+    let shared_claude_md = scan_claude_md(profile_names, claude_dir)?;
 
-    if states.is_empty() {
+    if states.is_empty() && shared_claude_md.is_empty() {
         output::success("All profiles already isolated. Nothing to repair.");
         return Ok(());
     }
 
     let (unique_by_profile, conflicts) = resolve_ownership(&states);
 
-    print_plan(&states, &unique_by_profile, &conflicts);
+    print_plan(&states, &unique_by_profile, &conflicts, &shared_claude_md);
 
     if dry_run {
         println!("\nDry run — nothing changed.");
@@ -91,6 +92,12 @@ fn run_repair(
         repair_profile(s, claude_dir, &owned)?;
     }
 
+    for name in &shared_claude_md {
+        let dir = paths::profile_dir(name)?;
+        crate::claude_md::write_overlay(&dir, claude_dir, name)
+            .with_context(|| format!("Failed to isolate CLAUDE.md for profile '{name}'"))?;
+    }
+
     output::success("Repair complete.");
     Ok(())
 }
@@ -117,6 +124,19 @@ fn scan_profiles(profile_names: &[String], claude_dir: &Path) -> Result<Vec<Prof
         });
     }
     Ok(states)
+}
+
+/// Returns the names of profiles whose global `CLAUDE.md` is still the legacy
+/// symlink into `~/.claude/` (shared across profiles).
+fn scan_claude_md(profile_names: &[String], claude_dir: &Path) -> Result<Vec<String>> {
+    let mut out = Vec::new();
+    for name in profile_names {
+        let dir = paths::profile_dir(name)?;
+        if crate::claude_md::is_shared_symlink(&dir, claude_dir) {
+            out.push(name.clone());
+        }
+    }
+    Ok(out)
 }
 
 fn resolve_ownership(states: &[ProfileState]) -> (UniqueByProfile<'_>, Conflicts<'_>) {
@@ -153,20 +173,31 @@ fn print_plan(
     states: &[ProfileState],
     unique_by_profile: &UniqueByProfile<'_>,
     conflicts: &[(&str, Vec<&str>)],
+    shared_claude_md: &[String],
 ) {
-    println!("Profiles needing repair:");
-    for s in states {
-        let subs = s.bad_subs.join(", ");
-        let n = unique_by_profile.get(s.name.as_str()).map_or(0, Vec::len);
-        println!(
-            "  {} — bad symlinks: {subs}; {n} owned cwd(s) to migrate",
-            s.name
-        );
+    if !states.is_empty() {
+        println!("Profiles needing repair:");
+        for s in states {
+            let subs = s.bad_subs.join(", ");
+            let n = unique_by_profile.get(s.name.as_str()).map_or(0, Vec::len);
+            println!(
+                "  {} — bad symlinks: {subs}; {n} owned cwd(s) to migrate",
+                s.name
+            );
+        }
+        if !conflicts.is_empty() {
+            println!("\nConflicts (claimed by multiple profiles — left in ~/.claude/):");
+            for (cwd, owners) in conflicts {
+                println!("  {cwd} (owners: {})", owners.join(", "));
+            }
+        }
     }
-    if !conflicts.is_empty() {
-        println!("\nConflicts (claimed by multiple profiles — left in ~/.claude/):");
-        for (cwd, owners) in conflicts {
-            println!("  {cwd} (owners: {})", owners.join(", "));
+    if !shared_claude_md.is_empty() {
+        println!(
+            "\nProfiles sharing the global CLAUDE.md (will get an isolated copy that\nimports the global one via @import):"
+        );
+        for name in shared_claude_md {
+            println!("  {name}");
         }
     }
 }
@@ -419,6 +450,40 @@ mod tests {
             .join("todos")
             .join(format!("{sid}-agent-{sid}.json"))
             .exists());
+
+        std::env::remove_var("CLAM_HOME");
+        Ok(())
+    }
+
+    #[test]
+    fn test_run_repair_isolates_shared_claude_md() -> Result<()> {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let tmp = tempfile::tempdir()?;
+        std::env::set_var("CLAM_HOME", tmp.path());
+        let (claude_dir, _) = setup(tmp.path());
+        fs::write(claude_dir.join("CLAUDE.md"), "# shared rules\n")?;
+
+        // Profile with ONLY the shared-CLAUDE.md problem (no bad session subs).
+        let pdir = paths::profile_dir("p")?;
+        fs::create_dir_all(&pdir)?;
+        fs::create_dir(pdir.join("projects"))?;
+        fs::create_dir(pdir.join("todos"))?;
+        symlink(claude_dir.join("CLAUDE.md"), pdir.join("CLAUDE.md"))?;
+
+        run_repair(&["p".to_string()], &claude_dir, false, true)?;
+
+        // Now a real, isolated file that imports the global one.
+        let cmd = pdir.join("CLAUDE.md");
+        assert!(cmd.is_file());
+        assert!(!cmd.is_symlink());
+        let body = fs::read_to_string(&cmd)?;
+        assert!(body.starts_with(&format!("@{}/CLAUDE.md", claude_dir.display())));
+        assert!(body.contains(crate::claude_md::PROFILE_LOCAL_MARKER));
+        // Global file untouched.
+        assert_eq!(
+            fs::read_to_string(claude_dir.join("CLAUDE.md"))?,
+            "# shared rules\n"
+        );
 
         std::env::remove_var("CLAM_HOME");
         Ok(())
