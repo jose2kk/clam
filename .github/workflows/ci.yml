@@ -55,7 +55,7 @@ jobs:
         with:
           toolchain: stable
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
-      - uses: taiki-e/install-action@15449e3094499af05d8d964a1c884208e4b8b595 # v2
+      - uses: taiki-e/install-action@16b05812d776ae1dfaabc8277e421fb6d2506419 # v2
         with:
           tool: nextest
       - run: cargo nextest run --all-features
@@ -94,10 +94,10 @@ jobs:
           toolchain: stable
           components: llvm-tools-preview
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
-      - uses: taiki-e/install-action@15449e3094499af05d8d964a1c884208e4b8b595 # v2
+      - uses: taiki-e/install-action@16b05812d776ae1dfaabc8277e421fb6d2506419 # v2
         with:
           tool: cargo-llvm-cov
-      - uses: taiki-e/install-action@15449e3094499af05d8d964a1c884208e4b8b595 # v2
+      - uses: taiki-e/install-action@16b05812d776ae1dfaabc8277e421fb6d2506419 # v2
         with:
           tool: nextest
       - run: cargo llvm-cov nextest --html --output-dir coverage-report
